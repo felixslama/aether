@@ -1,7 +1,7 @@
 #include <ESP32Servo.h> //import ESP32Servo library (get from manager)
 
 Servo myservo;  // create servo object to control a servo
-int servoPin = 18; // servo pin (GPIO 18)
+int servoPin = 32; // servo pin (GPIO 18)
 float value = 0;
 bool start = true;
 
