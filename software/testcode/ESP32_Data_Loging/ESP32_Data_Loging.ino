@@ -15,12 +15,7 @@
 #include "FS.h"
 #include "SD.h"
 #include "SPI.h"
-
-#define SCK  5
-#define MISO  16
-#define MOSI  18
-#define CS  17
-
+const int chipSelect = 17; 
 void listDir(fs::FS &fs, const char * dirname, uint8_t levels){
     Serial.printf("Listing directory: %s\n", dirname);
 
@@ -179,10 +174,8 @@ void testFileIO(fs::FS &fs, const char * path){
 }
 
 void setup(){
-  SPIClass spi = SPIClass(VSPI);
-  spi.begin(SCK, MISO, MOSI, CS);
     Serial.begin(115200);
-    if(!SD.begin(CS,spi,80000000)){
+    if(!SD.begin()){
         Serial.println("Card Mount Failed");
         return;
     }
