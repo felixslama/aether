@@ -3,31 +3,32 @@ const char MAIN_page[] PROGMEM = R"=====(
 <html>
 
 <head>
-  <link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="backscreen">
   <section>
 
-    <head>
-      <h1 class="glow">ITP - BFR</h1>
-    </head>
-    <!Actuall Website Content>
-      <h2 class="leading_text"><u>TELEMETRY DATA:</u></h2>
-      <article>
-        <h2 class="sensore_value"><u>Sensor Value:</u><span id="GyroValue"> 0</span></h1>
-          <br>
-          <!-- Turn Motor <a href="On">ON</a><br>
+    <h1 class="glow">BFR Control</h1>
+    <h2 class="leading_text"><u>TELEMETRY DATA: </u></h2>
+    <article>
+      <h2 class="sensore_value"><u>Sensor Value: </u><span id="GyroValue"> 0</span></h1>
+        <br>
+        <!-- Turn Motor <a href="On">ON</a><br>
         Turn Motor <a href="Off">OFF</a><br> -->
-          <h2 class="motor_value"><u>Motor:</u></h2>
-          <label class="toggle">
-            <span class="onoff">Sleep</span>
-            <input type="checkbox" />
-            <span class="slider round"></span>
-          </label>
-          </br>
-      </article>
+
+    </article>
+    <article>
+      <h2 class="motor_value"><u>Motor: </u></h2>
+      <label class="toggle">
+        <span class="onoff">Sleep</span>
+        <div id='toggleEngine'>
+          <input type="checkbox" />
+          <span class="slider round"></span>
+        </div>
+      </label>
+    </article>
   </section>
+
   <script>
     setInterval(function () {
       getData();
@@ -52,28 +53,31 @@ const char MAIN_page[] PROGMEM = R"=====(
     })
   </script>
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      min-height: 100vh;
-      display: flex;
+      display: block;
       justify-content: center;
       align-items: center;
     }
 
+    h2{
+      font-size: 3.5em;
+    }
     section {
-      height: 1020px;
-      width: 480px;
+      width: 100%;
       border: 5px solid #000;
     }
 
     article {
-      height: 500px;
-      width: 380px;
       border: 5px solid #23262E;
       margin-left: 40px;
-
+      margin-right: 40px;
     }
-
-
 
     .backscreen {
       background-color: #383838;
@@ -84,6 +88,7 @@ const char MAIN_page[] PROGMEM = R"=====(
       padding-top: 0.4em;
       padding-left: 0.4em;
       margin-bottom: 0.2em;
+      font-size: 4em;
     }
 
     .sensore_value {
@@ -92,7 +97,6 @@ const char MAIN_page[] PROGMEM = R"=====(
 
     .motor_value {
       padding-left: 1em;
-      padding-top: 3em;
     }
 
 
@@ -127,7 +131,7 @@ const char MAIN_page[] PROGMEM = R"=====(
       transition: 0.4s;
       width: 200px;
       height: 120px;
-      margin-left: 5em;
+
     }
 
     .slider:before {
@@ -162,7 +166,7 @@ const char MAIN_page[] PROGMEM = R"=====(
 
 
     .glow {
-      font-size: 40px;
+      font-size: 6em;
       color: #fff;
       text-align: center;
       -webkit-animation: glow 1s ease-in-out infinite alternate;
@@ -178,6 +182,9 @@ const char MAIN_page[] PROGMEM = R"=====(
       to {
         text-shadow: 0 0 20px #fff, 0 0 30px #4C4C4C, 0 0 40px #4C4C4C, 0 0 50px #4C4C4C, 0 0 60px #4C4C4C, 0 0 70px #4C4C4C, 0 0 80px #4C4C4C;
       }
+    }
+    #toggleEngine{
+      margin-left: 38%;
     }
   </style>
 </body>
