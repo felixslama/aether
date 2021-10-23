@@ -1,0 +1,48 @@
+const char MAIN_page[] PROGMEM = R"=====(
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="backscreen">
+    <section>
+    <head>
+      <h1 class="glow">ITP - BFR</h1>
+    </head>
+    <!Actuall Website Content>
+    <h2 class="leading_text"><u>TELEMETRY DATA:</u></h2>
+    <article>
+      <h2 class="sensore_value"><u>Sensor Value:</u><span id="GyroValue"> 0</span></h1>
+      <br>
+        <!-- Turn Motor <a href="On">ON</a><br>
+        Turn Motor <a href="Off">OFF</a><br> -->
+        <h2 class="motor_value"><u>Motor:</u></h2>
+        <label class="toggle">
+          <span class="onoff">Sleep</span>
+          <input type="checkbox" />
+          <span class="slider round"></span>
+        </label>
+      </br>
+      </article>
+    </section>
+  <script>
+    setInterval(function() {
+      getData();
+    }, 500); //update rate
+    
+    function getData() {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          document.getElementById("GyroValue").innerHTML =
+          this.responseText;
+        }
+      };
+      xhttp.open("GET", "readGyro", true);
+      xhttp.send();
+    }
+  </script>
+  <script src="main.js"></script>
+  </body>
+</html>
+)=====";
