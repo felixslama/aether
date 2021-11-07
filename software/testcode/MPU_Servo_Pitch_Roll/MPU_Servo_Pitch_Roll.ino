@@ -21,10 +21,10 @@ int i;
 float correctOverdrive = 1.005;
 
 Servo myservo1;  // create servo object to control a servo
-int servoPin1 = 18;
+int servoPin1 = 5;
 
 Servo myservo2;  // create servo object to control a servo
-int servoPin2 = 17;
+int servoPin2 = 2;
 
 // MPU control/status vars
 bool dmpReady = false;  // set true if DMP init was successful
@@ -80,6 +80,8 @@ void setup() {
 
     devStatus = mpu.dmpInitialize();
 
+    Serial.begin(9600);
+    
     // supply your own gyro offsets here, scaled for min sensitivity
     mpu.setXGyroOffset(220);
     mpu.setYGyroOffset(76);
@@ -121,13 +123,15 @@ void loop() {
               yawA = (ypr[0] * 180/M_PI);
               pitchA = (ypr[1] * 180/M_PI);
               rollA = (ypr[2] * 180/M_PI);
-              int servoMapYaw = map(yawA, 90, -90, 180, 0);
-              int servoMapPitch = map(pitchA, 90, -90, 180, 0);
-              int servoMapRoll = map(rollA, 90, -90, 180, 0);
+              int servoMapYaw = map(yawA, 90.00, -90.00, 180.00, 0.00);
+              int servoMapPitch = map(pitchA, 90.00, -90.00, 180.00, 0.00);
+              int servoMapRoll = map(rollA, 90.00, -90.00, 180.00, 0.00);
               float calcValueR = pow(correctOverdrive, (servoMapRoll - 90));
               float calcValueP = pow(correctOverdrive, (servoMapPitch - 90));
               myservo1.write(servoMapRoll*calcValueR);
+              Serial.println(servoMapRoll*calcValueR);
               myservo2.write(servoMapPitch*calcValueP);
+              Serial.println(servoMapPitch*calcValueP);
             }
         #endif
     }
