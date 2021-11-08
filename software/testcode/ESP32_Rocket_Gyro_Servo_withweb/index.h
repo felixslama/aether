@@ -8,7 +8,7 @@ const char MAIN_page[] PROGMEM = R"=====(
 <body class="backscreen">
   <section>
 
-    <h1 class="glow">BFR Control</h1>
+    <h1 class="glow">AEOTHER ONE</h1>
     <h2 class="leading_text"><u>TELEMETRY DATA: </u></h2>
     <article>
       <h2 class="sensore_value"><u>Sensor Value: </u><span id="GyroValue"> 0</span></h1>
