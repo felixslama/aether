@@ -17,7 +17,7 @@ void setup() {
   ESC1.attach(12,1000,2000); // (pin, min pulse width, max pulse width in microseconds) 
   ESC2.attach(14,1000,2000); // (pin, min pulse width, max pulse width in microseconds)
   Serial.println("Wating 10 seconds for ESC");
-  delay(10000);
+  delay(5000);
   ESC1.write(0);    // Send the signal to the ESC
   ESC2.write(0);    // Send the signal to the ESC
   Serial.println("Wait 5 seconds befor motor start");
@@ -25,8 +25,9 @@ void setup() {
 }
 
 void loop() {
-  if (value > 180 && once == true) {
+  if (value > 120 && once == true) {
     once = false;
+    delay(5000);
     modifier = -0.5;
   }
   value = value + modifier;

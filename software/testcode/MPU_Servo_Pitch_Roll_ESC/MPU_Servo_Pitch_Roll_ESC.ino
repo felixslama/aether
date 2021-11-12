@@ -13,12 +13,22 @@ MPU6050 mpu;
 #define INTERRUPT_PIN 2  // use pin 2 on Arduino Uno & most boards
 #define LED_PIN 13 // (Arduino is 13, Teensy is 11, Teensy++ is 6)
 bool blinkState = false;
-
+bool collectedSamples = false;
 float yawA, rollA, pitchA;
 float correct;
 int i;
-
+float value = 0;
+float modifier = 0.5;
+bool once = true;
 float correctOverdrive = 1.005;
+long previousMillis = 0;
+long interval = 50;   
+float offsetRoll = 10;
+float offsetPitch = 0;
+float offsetYaw = 0;
+
+Servo ESC1;
+Servo ESC2;
 
 Servo myservo1;  // create servo object to control a servo
 int servoPin1 = 4;
@@ -62,6 +72,8 @@ void dmpDataReady() {
 // ================================================================
 
 void setup() {
+    Serial.begin(115200);
+    
     myservo1.setPeriodHertz(300);    // standard 50 hz servo
     myservo1.attach(servoPin1, 0, 2500); // attaches the servo on pin 18 to the servo object
     myservo2.setPeriodHertz(300);    // standard 50 hz servo
@@ -79,8 +91,6 @@ void setup() {
     delay(1000);
 
     devStatus = mpu.dmpInitialize();
-
-    Serial.begin(9600);
     
     // supply your own gyro offsets here, scaled for min sensitivity
     mpu.setXGyroOffset(220);
@@ -104,12 +114,20 @@ void setup() {
         // get expected DMP packet size for later comparison
         packetSize = mpu.dmpGetFIFOPacketSize();
     }
+    ESC1.attach(12,1000,2000); // (pin, min pulse width, max pulse width in microseconds) 
+    ESC2.attach(14,1000,2000); // (pin, min pulse width, max pulse width in microseconds)
+    Serial.println("Wating 2 seconds for ESC");
+    delay(2000);
+    ESC1.write(0);    // Send the signal to the ESC
+    ESC2.write(0);    // Send the signal to the ESC
+    Serial.println("Wait 2 seconds befor motor start");
+    delay(2000);
 }
 
 void loop() {
-    // if programming failed, don't try to do anything
-    if (!dmpReady) return;
-    // read a packet from FIFO
+    if (!dmpReady) {
+      return;
+    }
     if (mpu.dmpGetCurrentFIFOPacket(fifoBuffer)) { // Get the Latest packet 
         #ifdef OUTPUT_READABLE_YAWPITCHROLL
             // display Euler angles in degrees
@@ -117,9 +135,11 @@ void loop() {
             mpu.dmpGetGravity(&gravity, &q);
             mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
             if (i <= 300) {
+              Serial.print("Collecting Samples...");
               correct = ypr[0];
               i++;
             } else {
+              collectedSamples = true;
               yawA = (ypr[0] * 180/M_PI);
               pitchA = (ypr[1] * 180/M_PI);
               rollA = (ypr[2] * 180/M_PI);
@@ -128,15 +148,34 @@ void loop() {
               int servoMapRoll = map(rollA, 90.00, -90.00, 180.00, 0.00);
               float calcValueR = pow(correctOverdrive, (servoMapRoll - 90));
               float calcValueP = pow(correctOverdrive, (servoMapPitch - 90));
-              float endValueR = servoMapRoll*calcValueR;
-              float endValueP = servoMapPitch*calcValueP;
-              if (endValueR > 55 && endValueP < 105 && endValueR > 105 && endValueP > 55) {
+              float endValueR = (servoMapRoll*calcValueR)+offsetRoll;
+              float endValueP = (servoMapPitch*calcValueP)+offsetPitch;
+              if (endValueR > 75 && endValueR < 125) {
                 myservo1.write(endValueR);
-                Serial.println(endValueR);
+              }
+              if (endValueP > 75 && endValueP < 105) {
                 myservo2.write(endValueP);
-                Serial.println(endValueP);
               }
             }
         #endif
+    }
+    
+    unsigned long currentMillis = millis();
+ 
+    if(currentMillis - previousMillis > interval) {
+      previousMillis = currentMillis;
+      if (collectedSamples == true) {
+        if (value > 180 && once == true) {
+          once = false;
+          modifier = -0.5;
+        }
+        if (value < 0 && once == false) {
+          modifier = 0; 
+        }
+        value = value + modifier;
+        ESC1.write(value);    // Send the signal to the ESC
+        ESC2.write(value);    // Send the signal to the ESC
+        Serial.println(value);      
+      }
     }
 }
