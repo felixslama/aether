@@ -28,6 +28,7 @@ void sendLora(String messageToSend){
     LoRa.print(messageToSend);
     LoRa.endPacket();
     Serial.println("sent external");
+    delay(2000);
 }
 
 String readLora(){
