@@ -30,10 +30,10 @@ float offsetYaw = 0;
 Servo ESC1;
 Servo ESC2;
 
-Servo myservo1;
+Servo servo1;
 int servoPin1 = 4;
 
-Servo myservo2;
+Servo servo2;
 int servoPin2 = 2;
 
 // MPU
@@ -61,10 +61,10 @@ void dmpDataReady() {
 //Servo Init
 
 void initServo(){
-    myservo1.setPeriodHertz(300);
-    myservo1.attach(servoPin1, 0, 2500);
-    myservo2.setPeriodHertz(300);
-    myservo2.attach(servoPin2, 0, 2500);
+    servo1.setPeriodHertz(300);
+    servo1.attach(servoPin1, 0, 2500);
+    servo2.setPeriodHertz(300);
+    servo2.attach(servoPin2, 0, 2500);
 }
 
 //MPU Init
@@ -141,10 +141,10 @@ void loopControl(){
               float endValueR = (servoMapRoll*calcValueR)+offsetRoll;
               float endValueP = (servoMapPitch*calcValueP)+offsetPitch;
               if (endValueR > 75 && endValueR < 125) {
-                myservo1.write(endValueR);
+                servo1.write(endValueR);
               }
               if (endValueP > 75 && endValueP < 105) {
-                myservo2.write(endValueP);
+                servo2.write(endValueP);
               }
             }
         #endif
