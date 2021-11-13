@@ -160,7 +160,7 @@ void loopControl(){
           modifier = -0.5;
         }
         if (value < 0 && once == false) {
-          modifier = 0; 
+          modifier = 0; \
         }
         value = value + modifier;
         ESC1.write(value);
@@ -168,4 +168,15 @@ void loopControl(){
         Serial.println(value);      
       }
     }
+}
+
+void escOFF(){
+    ESC1.write(0);
+    ESC2.write(0);
+}
+void escHold(){
+//implement engine hold
+}
+void escKill(){
+  //implement engine kill
 }

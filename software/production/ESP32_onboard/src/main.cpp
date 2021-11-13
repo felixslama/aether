@@ -3,6 +3,7 @@
 #include <Wire.h>
 #include "aetherLora.h"
 #include "aetherServoPitchRoll.h"
+#include "aetherComs.h"
 
 void setup() {
   Serial.begin(115200);
@@ -11,12 +12,10 @@ void setup() {
   initMPU();
   initESC();
   delay(2000);
+  sendLora("setup done");
 }
 
 void loop() {
-  sendLora("pls work");
-  // if(readLora() == "pls work"){
-  //   Serial.print("worked i guess");
-  // }
+  handleReceivedLora();
   loopControl();
 }
