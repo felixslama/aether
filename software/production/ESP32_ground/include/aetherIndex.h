@@ -9,7 +9,7 @@ const char aetherIndex[] PROGMEM = R"=====(
   <section>
 
     <h1 style="font-size: 5em; padding-left: 0.4em; text-align: center; color:white;">AETHER ONE</h1>
-    <h2 style="font-size: 3em; padding-left: 15%; color:white;"><u>TELEMETRY DATA STATUS</u></h2>
+    <h2 style="font-size: 3em; padding-left: 15%; color:white;"><u>TELEMETRY DATA</u></h2>
     <h2 style="font-size: 2.5em; padding-top:2.5em;  padding-left: 10%; color:white;" class="sensore_value"><u>Sensor
         Value: </u><span id="GyroValue"> 0</span></h1>
       <h2 style="font-size: 2.5em; padding-top:2.5em; padding-left: 10%; color:white;"><u>About Motor:</u></h2>
