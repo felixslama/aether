@@ -1,3 +1,4 @@
+const char aetherIndex[] PROGMEM = R"=====(
 <!DOCTYPE html>
 <html>
 
@@ -90,3 +91,4 @@
 </body>
 
 </html>
+)=====";
