@@ -1,2 +1,2 @@
 # AETHER ONE
-<img align="center" width=250 height=250 src="sketches/logo.png" />
+<img align="center" src="sketches/logo.png" />
