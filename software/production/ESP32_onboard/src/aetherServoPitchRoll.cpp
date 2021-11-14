@@ -180,3 +180,6 @@ void escHold(){
 void escKill(){
   //implement engine kill
 }
+void escON(){
+  //implement engine on
+}
