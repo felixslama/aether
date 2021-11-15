@@ -8,10 +8,13 @@
 void setup() {
   Serial.begin(115200);
   initLora();
+  sendLora("initLora done");
   initServo();
+  sendLora("initServer done");
   initMPU();
+  sendLora("initMPU done");
   initESC();
-  delay(2000);
+  sendLora("initESC done");
   sendLora("setup done");
 }
 

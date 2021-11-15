@@ -7,11 +7,16 @@
 
 void setup() {
   Serial.begin(115200);
-  initDisplay();
   initLora();
+  Serial.println("initLora done");
+  sendLora("initLora done");
+  initDisplay();
+  Serial.println("initDisplay done");
+  sendLora("initDisplay done");
   initWeb();
-  delay(2000);
-  sendLora("end of setup");
+  Serial.println("initWeb done");
+  sendLora("initWeb done");
+  sendLora("Setup Done");
 }
 
 void loop() {

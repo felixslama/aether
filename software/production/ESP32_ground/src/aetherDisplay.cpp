@@ -49,7 +49,7 @@ void initDisplay() {
   display.setTextColor(WHITE);
   display.setTextSize(1);
   display.setCursor(0,0);
-  display.print("AETHER ONE GROUND STATION");
+  display.print("Starting up");
   display.display();
 
 }

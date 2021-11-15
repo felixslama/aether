@@ -114,6 +114,8 @@ void initESC() {
 
 //Main Loop
 
+bool holdEngine = false;
+
 void loopControl(){
     if (!dmpReady) {
       return;
@@ -149,20 +151,22 @@ void loopControl(){
             }
         #endif
     }
-
+    
     unsigned long currentMillis = millis();
-
-    if(currentMillis - previousMillis > interval) {
+      if(currentMillis - previousMillis > interval) {
       previousMillis = currentMillis;
       if (collectedSamples == true) {
-        if (value > 180 && once == true) {
-          once = false;
-          modifier = -0.5;
+        if(holdEngine == false){
+          if (value > 180 && once == true) {
+            once = false;
+            modifier = -0.5;
+          }
+          if (value < 0 && once == false) {
+            modifier = 0; \
+          }
+          value = value + modifier;
         }
-        if (value < 0 && once == false) {
-          modifier = 0; \
-        }
-        value = value + modifier;
+        
         ESC1.write(value);
         ESC2.write(value);
         Serial.println(value);      
@@ -175,7 +179,7 @@ void escOFF(){
     ESC2.write(0);
 }
 void escHold(){
-//implement engine hold
+  holdEngine = true;
 }
 void escKill(){
   //implement engine kill
