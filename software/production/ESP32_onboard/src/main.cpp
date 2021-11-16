@@ -10,7 +10,7 @@ void setup() {
   initLora();
   sendLora("initLora done");
   initServo();
-  sendLora("initServer done");
+  sendLora("initServo done");
   initMPU();
   sendLora("initMPU done");
   initESC();
