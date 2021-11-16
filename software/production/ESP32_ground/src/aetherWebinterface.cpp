@@ -71,6 +71,8 @@ void initWeb(){
     server.on("/holdThrust", handleHoldThrust);
     server.on("/noHoldThrust",handleNoHoldThrust);
     server.on("/kill",handleKill);
+    server.on("/increase",increase);
+    server.on("/decrease",decrease);
     server.begin();
     Serial.println("HTTP server started");
 }

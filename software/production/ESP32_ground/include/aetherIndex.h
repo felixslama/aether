@@ -17,8 +17,8 @@ const char aetherIndex[] PROGMEM = R"=====(
       <button id="holdThrust" onclick="holdThrust()">Hold Thrust</button>
       <button id="noHoldThrust" onclick="noHoldThrust()">No Hold Thrust</button>
       <button id="killSwitch" onclick="kill()">Kill</button>
-      <button id="increase" onclick="increase()"Speed Up</button>
-      <button id="decrease" onclick="decrease()"Speed Down</button>
+      <!-- <button id="increase" onclick="increase()">Speed Up</button>
+      <button id="decrease" onclick="decrease()">Speed Down</button> -->
       <!-- Turn Motor <a href="On">ON</a><br>
         Turn Motor <a href="Off">OFF</a><br> -->
 

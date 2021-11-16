@@ -177,7 +177,7 @@ void loopControl(){
 }
 
 void escOFF(){
-    interval = 9999999;
+    collectedSamples = false;
     ESC1.write(0);
     ESC2.write(0);
 }

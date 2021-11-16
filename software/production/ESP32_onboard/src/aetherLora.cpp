@@ -31,7 +31,7 @@ void sendLora(String messageToSend){
     if(currMillis - prevMillis > intvl) {
         prevMillis = currMillis;
         LoRa.beginPacket();
-        LoRa.print(messageToSend);
+        LoRa.println(messageToSend);
         LoRa.endPacket();
         Serial.println("sent external");
     }
