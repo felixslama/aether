@@ -197,18 +197,10 @@ void escON(){
   //implement engine on
 }
 void escUP(){
-    oldvalue = ESC1.read();
-    newvalue = oldvalue + 5
-    ESC1.write(newvalue)
-    oldvalue = ESC2.read();
-    newvalue = oldvalue + 5
-    ESC2.write(newvalue)
+    holdEngine = true;
+    value = value + 5;
 }
 void escDOWN(){
-    oldvalue = ESC1.read();
-    newvalue = oldvalue - 5
-    ESC1.write(newvalue)
-    oldvalue = ESC2.read();
-    newvalue = oldvalue - 5
-    ESC2.write(newvalue)
+    holdEngine = true;
+    value = value - 5;
 }

@@ -8,3 +8,5 @@ void escHold();
 void escKill();
 void escON();
 void escNoHold();
+void escUP();
+void escDOWN();
