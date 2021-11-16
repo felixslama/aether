@@ -30,7 +30,6 @@ void handleOn() {
  sendLora("ENGINE ON");
  handleRoot();
 }
-
 void handleOff() { 
  Serial.println("OFF");
  sendLora("ENGINE OFF");
@@ -50,6 +49,16 @@ void handleKill(){
     Serial.println("killed");
  sendLora("ENGINE KILL");
  handleRoot();
+}
+void increase(){
+    Serial.println("increased");
+sendLora("SPEED UP");
+handleRoot();
+}
+void decrease(){
+    Serial.println("decrease");
+sendLora("SPEED DOWN");
+handleRoot();
 }
 
 void initWeb(){

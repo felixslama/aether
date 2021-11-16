@@ -19,5 +19,9 @@ void handleReceivedLora(){
         escON();
     }else if (dataReceived == "NO ENGINE HOLD"){
         escNoHold();
+    }else if (dataReceived == "SPEED UP"){
+        escUP();
+    }else if (dataReceived == "SPEED DOWN"){
+        escDOWN();
     }
 }
