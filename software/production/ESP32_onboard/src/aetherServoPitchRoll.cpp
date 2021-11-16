@@ -198,17 +198,17 @@ void escON(){
 }
 void escUP(){
     oldvalue = ESC1.read();
-    newvalue = oldvalue + 200
+    newvalue = oldvalue + 5
     ESC1.write(newvalue)
     oldvalue = ESC2.read();
-    newvalue = oldvalue + 200
+    newvalue = oldvalue + 5
     ESC2.write(newvalue)
 }
 void escDOWN(){
     oldvalue = ESC1.read();
-    newvalue = oldvalue - 200
+    newvalue = oldvalue - 5
     ESC1.write(newvalue)
     oldvalue = ESC2.read();
-    newvalue = oldvalue - 200
+    newvalue = oldvalue - 5
     ESC2.write(newvalue)
 }
