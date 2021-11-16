@@ -17,5 +17,7 @@ void handleReceivedLora(){
         escKill();
     }else if (dataReceived == "ENGINE ON"){
         escON();
+    }else if (dataReceived == "NO ENGINE HOLD"){
+        escNoHold();
     }
 }

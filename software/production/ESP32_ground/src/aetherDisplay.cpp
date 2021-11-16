@@ -1,19 +1,9 @@
-/*********
-  LoRa Sender
-  pollux labs
-  https://polluxlabs.net
-*********/
-
-//Bibliotheken für LoRa
 #include <SPI.h>
-
+#include "aetherLora.h"
 //Bibliotheken für das OLED-Display
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
-
-//Frequenzbereich für Europa
-#define BAND 866E6
 
 //Pins, an denen das OLED-Display angeschlossen ist
 #define OLED_SDA 21
@@ -62,12 +52,8 @@ void loopDisplay() {
   display.setTextSize(1);
   display.print("Status: ");
   //display.setCursor(105,20);
-  display.print(counter);      
+  display.print(readLora());      
   display.display();
-
-  counter++;
-  
-  delay(1000);
 }
 void writeDisplay(String messageToDisplay){
     display.println(messageToDisplay);

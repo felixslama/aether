@@ -15,6 +15,7 @@ const char aetherIndex[] PROGMEM = R"=====(
       <h2 style="font-size: 2.5em; padding-top:2.5em; padding-left: 10%; color:white;"><u>About Motor:</u></h2>
       <button id="current" onclick="changestatus()">Turn ON</button>
       <button id="holdThrust" onclick="holdThrust()">Hold Thrust</button>
+      <button id="noHoldThrust" onclick="noHoldThrust()">No Hold Thrust</button>
       <button id="killSwitch" onclick="kill()">Kill</button>
       <!-- Turn Motor <a href="On">ON</a><br>
         Turn Motor <a href="Off">OFF</a><br> -->
@@ -60,6 +61,11 @@ const char aetherIndex[] PROGMEM = R"=====(
     function holdThrust() {
       var xhttp = new XMLHttpRequest();
       xhttp.open("GET", "holdThrust", true);
+      xhttp.send();
+    }
+    function noHoldThrust() {
+      var xhttp = new XMLHttpRequest();
+      xhttp.open("GET", "noHoldThrust", true);
       xhttp.send();
     }
 

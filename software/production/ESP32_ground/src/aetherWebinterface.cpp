@@ -41,6 +41,11 @@ void handleHoldThrust(){
  sendLora("ENGINE HOLD");
  handleRoot();
 }
+void handleNoHoldThrust(){
+    Serial.println("no hold thrust");
+ sendLora("NO ENGINE HOLD");
+ handleRoot();
+}
 void handleKill(){
     Serial.println("killed");
  sendLora("ENGINE KILL");
@@ -55,6 +60,7 @@ void initWeb(){
     server.on("/On", handleOn);
     server.on("/Off", handleOff);
     server.on("/holdThrust", handleHoldThrust);
+    server.on("/noHoldThrust",handleNoHoldThrust);
     server.on("/kill",handleKill);
     server.begin();
     Serial.println("HTTP server started");

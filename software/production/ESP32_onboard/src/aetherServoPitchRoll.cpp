@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <ESP32Servo.h>
 #include "MPU6050_6Axis_MotionApps20.h"
+#include "aetherLora.h"
 
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
     #include "Wire.h"
@@ -169,7 +170,8 @@ void loopControl(){
         
         ESC1.write(value);
         ESC2.write(value);
-        Serial.println(value);      
+        Serial.println(value);
+        sendLora(String(value));     
       }
     }
 }
@@ -180,6 +182,9 @@ void escOFF(){
 }
 void escHold(){
   holdEngine = true;
+}
+void escNoHold(){
+  holdEngine = false;
 }
 void escKill(){
   //implement engine kill
