@@ -171,12 +171,13 @@ void loopControl(){
         ESC1.write(value);
         ESC2.write(value);
         Serial.println(value);
-        sendLora(String(value));     
+        sendLora(String(value));
       }
     }
 }
 
 void escOFF(){
+    interval = 9999999;
     ESC1.write(0);
     ESC2.write(0);
 }
@@ -187,6 +188,9 @@ void escNoHold(){
   holdEngine = false;
 }
 void escKill(){
+  interval = 9999999;
+  ESC1.write(0);
+  ESC2.write(0);
   //implement engine kill
 }
 void escON(){
