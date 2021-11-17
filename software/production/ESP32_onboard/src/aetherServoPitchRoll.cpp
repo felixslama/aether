@@ -137,9 +137,9 @@ void loopControl(){
               yawA = (ypr[0] * 180/M_PI);
               pitchA = (ypr[1] * 180/M_PI);
               rollA = (ypr[2] * 180/M_PI);
-              int servoMapYaw = map(yawA, 90.00, -90.00, 180.00, 0.00);
-              int servoMapPitch = map(pitchA, 90.00, -90.00, 180.00, 0.00);
-              int servoMapRoll = map(rollA, 90.00, -90.00, 180.00, 0.00);
+              //int servoMapYaw = map(yawA, 90.00, -90.00, 180.00, 0.00);
+              int servoMapPitch = map(pitchA, -90.00, 90.00, 180.00, 0.00);
+              int servoMapRoll = map(rollA, -90.00, 90.00, 180.00, 0.00);
               float calcValueR = pow(correctOverdrive, (servoMapRoll - 90));
               float calcValueP = pow(correctOverdrive, (servoMapPitch - 90));
               float endValueR = (servoMapRoll*calcValueR)+offsetRoll;
