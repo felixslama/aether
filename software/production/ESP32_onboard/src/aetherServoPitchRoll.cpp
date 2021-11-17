@@ -24,8 +24,9 @@ long previousMillis = 0;
 long interval = 50;   
 float offsetRoll = 10;
 float offsetPitch = 0;
+bool killed = false;
 float offsetYaw = 0;
-
+bool runLoop = true;
 // Servos
 
 Servo ESC1;
@@ -154,7 +155,10 @@ void loopControl(){
     }
     
     unsigned long currentMillis = millis();
-      if(currentMillis - previousMillis > interval) {
+    if(runLoop == true){
+
+         
+    if(currentMillis - previousMillis > interval) {
       previousMillis = currentMillis;
       if (collectedSamples == true) {
         if(holdEngine == false){
@@ -174,6 +178,7 @@ void loopControl(){
         sendLora(String(value));
       }
     }
+    } 
 }
 
 void escOFF(){
@@ -188,19 +193,21 @@ void escNoHold(){
   holdEngine = false;
 }
 void escKill(){
-  interval = 9999999;
-  ESC1.write(0);
-  ESC2.write(0);
+  if(killed == false){
+    Serial.println("Called KILL");
+    runLoop = false;
+    ESC1.write(0);
+    ESC2.write(0);
+    Serial.println(ESC1.read());
+    Serial.println(ESC2.read());
+    sendLora("Killed");
+    killed = true;
+  }else{
+    Serial.println("already dead");
+  }
+  
   //implement engine kill
 }
 void escON(){
   //implement engine on
-}
-void escUP(){
-    holdEngine = true;
-    value = value + 5;
-}
-void escDOWN(){
-    holdEngine = true;
-    value = value - 5;
 }
