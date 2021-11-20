@@ -4,7 +4,7 @@
 #include "aetherLora.h"
 #include "aetherServoPitchRoll.h"
 #include "aetherComs.h"
-//#include "aetherLog.h"
+#include "aetherLog.h"
 //Logs WIP
 void setup() {
   Serial.begin(115200);
@@ -23,6 +23,7 @@ void setup() {
   //writeLog("initESC done");
   sendLora("setup done");
   //writeLog("setup done");
+  closeLog();
 }
 
 void loop() {
