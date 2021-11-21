@@ -47,3 +47,8 @@ String readLora(){
     }
     return LoRaData;
 }
+
+void endLora(){
+    sendLora("ending Lora");
+    SPI.end();
+}

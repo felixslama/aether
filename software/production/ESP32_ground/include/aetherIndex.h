@@ -3,7 +3,6 @@ const char aetherIndex[] PROGMEM = R"=====(
 <html>
 
 <head>
-<meta name="viewport" content="width=device-width, user-scalable=no">
 </head>
 
 <body style="width: 99%; height: 99%; background-color:#141441;">

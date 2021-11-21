@@ -11,19 +11,18 @@ void setup() {
   //initLog();
   initLora();
   sendLora("initLora done");
-  //writeLog("initLora done");
+  writeLog("initLora done");
   initServo();
   sendLora("initServo done");
-  //writeLog("iniServo done");
+  writeLog("iniServo done");
   initMPU();
   sendLora("initMPU done");
-  //writeLog("initMPU done");
+  writeLog("initMPU done");
   initESC();
   sendLora("initESC done");
-  //writeLog("initESC done");
+  writeLog("initESC done");
   sendLora("setup done");
-  //writeLog("setup done");
-  closeLog();
+  writeLog("setup done");
 }
 
 void loop() {
