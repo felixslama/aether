@@ -4,11 +4,15 @@
 #include "aetherLora.h"
 #include "aetherWebinterface.h"
 #include "aetherDisplay.h"
+#include "aetherLog.h"
 
 void setup() {
+
   Serial.begin(115200);
+//  initLog();
   initLora();
   Serial.println("initLora done");
+  //writeLog("testtest");
   sendLora("initLora done");
   initDisplay();
   Serial.println("initDisplay done");
@@ -16,7 +20,8 @@ void setup() {
   initWeb();
   Serial.println("initWeb done");
   sendLora("initWeb done");
-  sendLora("Setup Done");
+  sendLora("Setup Done"); 
+  //closeLog();
 }
 
 void loop() {

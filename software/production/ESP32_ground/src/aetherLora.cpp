@@ -9,10 +9,10 @@
 #define MISO 19
 #define MOSI 27
 #define SS 18
-#define RST 14
+#define RST 23
 #define DIO0 26
 
-String LoRaData; //string for lora data
+String LoRaData;
 long prevMillis = 0;
 long intvl = 2000;   
 
