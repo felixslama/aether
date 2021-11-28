@@ -8,15 +8,14 @@
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
     #include "Wire.h"
 #endif
-MPU6050 mpu;
-#define OUTPUT_READABLE_YAWPITCHROLL
 
-#define INTERRUPT_PIN 2
-#define LED_PIN 13
-bool blinkState = false;
-bool collectedSamples = false;
-float yawA, rollA, pitchA;
-float correct;
+// MPU
+
+//create gyro object
+MPU6050 mpu;
+
+// general purpose vars
+
 int i;
 float value = 0;
 float modifier = 0.5;
@@ -25,29 +24,49 @@ long previousMillis = 0;
 long interval = 50;   
 bool killed = false;
 bool runLoop = true;
-double Setpoint;
 double InputPitch, OutputPitchP, OutputPitchN;
 double InputRoll, OutputRollP, OutputRollN;
 float servoRoll, servoPitch;
 
+// ESC
+
+//two servo objects for ESC's (PWM)
 Servo ESC1;
 Servo ESC2;
 
+// Servo
+
+//pin assignments
 Servo myservo1;
 int servoPin1 = 4;
-
 Servo myservo2;
 int servoPin2 = 2;
 
 // PID
 
-PID rollPID(&InputRoll, &OutputRollP, &Setpoint, 1.1, 0, 0, DIRECT);
-PID NrollPID(&InputRoll, &OutputRollN, &Setpoint, 1.1, 0, 0, REVERSE);
-PID pitchPID(&InputPitch, &OutputPitchP, &Setpoint, 1.1, 0, 0, DIRECT);
-PID NpitchPID(&InputPitch, &OutputPitchN, &Setpoint, 1.1, 0, 0, REVERSE);
+//tuning params Roll
+float rKp=1.1, rKi=0, rKd=0;
+//tuning params Pitch
+float pKp=1.1, pKi=0, pKd=0;
+// Setpoint (value to maintain)
+double Setpoint = 0;
+
+//pid loops assignment for positive/negative Roll
+PID rollPID(&InputRoll, &OutputRollP, &Setpoint, rKp, rKi, rKd, DIRECT);
+PID NrollPID(&InputRoll, &OutputRollN, &Setpoint, rKp, rKi, rKd, REVERSE);
+//pid loops assignment for positive/negative Pitch
+PID pitchPID(&InputPitch, &OutputPitchP, &Setpoint, pKp, pKi, pKd, DIRECT);
+PID NpitchPID(&InputPitch, &OutputPitchN, &Setpoint, pKp, pKi, pKd, REVERSE);
 
 // MPU
 
+#define OUTPUT_READABLE_YAWPITCHROLL
+#define INTERRUPT_PIN 2
+#define LED_PIN 13
+bool blinkState = false;
+bool collectedSamples = false;
+float yawA, rollA, pitchA;
+float correct;
 bool dmpReady = false;
 uint8_t mpuIntStatus;
 uint8_t devStatus;
@@ -107,7 +126,9 @@ void initMPU() {
         dmpReady = true;
         packetSize = mpu.dmpGetFIFOPacketSize();
     }
-  Setpoint = 0;
+  
+  // further PID configs
+
   rollPID.SetMode(AUTOMATIC);
   NrollPID.SetMode(AUTOMATIC);
   rollPID.SetOutputLimits(0,30);
@@ -139,8 +160,7 @@ void loopControl(){
     if (!dmpReady) {
       return;
     }
-    if (mpu.dmpGetCurrentFIFOPacket(fifoBuffer)) { // Get the Latest packet 
-        // display Euler angles in degrees
+    if (mpu.dmpGetCurrentFIFOPacket(fifoBuffer)) {
         mpu.dmpGetQuaternion(&q, fifoBuffer);
         mpu.dmpGetGravity(&gravity, &q);
         mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
@@ -158,16 +178,8 @@ void loopControl(){
           NrollPID.Compute();
           pitchPID.Compute();
           NpitchPID.Compute();
-          if (InputRoll < Setpoint) {
-            servoRoll = 90+OutputRollP;
-          } else {
-            servoRoll = 90-OutputRollN;
-          }
-          if (InputPitch < Setpoint) {
-            servoPitch = 90+OutputPitchP;
-          } else {
-            servoPitch = 90-OutputPitchN;
-          }
+          servoRoll = (90+OutputRollP)-OutputRollN;
+          servoPitch = (90+OutputPitchP)-OutputPitchN;
           myservo1.write(servoRoll);
           myservo2.write(servoPitch);
         }
@@ -175,28 +187,26 @@ void loopControl(){
     
     unsigned long currentMillis = millis();
     if(runLoop == true){
-
-         
-    if(currentMillis - previousMillis > interval) {
-      previousMillis = currentMillis;
-      if (collectedSamples == true) {
-        if(holdEngine == false){
-          if (value > 180 && once == true) {
-            once = false;
-            modifier = -0.5;
+        if(currentMillis - previousMillis > interval) {
+          previousMillis = currentMillis;
+          if (collectedSamples == true) {
+            if(holdEngine == false){
+              if (value > 180 && once == true) {
+                once = false;
+                modifier = -0.5;
+              }
+              if (value < 0 && once == false) {
+                modifier = 0; \
+              }
+              value = value + modifier;
+            }
+            
+            ESC1.write(value);
+            ESC2.write(value);
+            Serial.println(value);
+            sendLora(String(value));
           }
-          if (value < 0 && once == false) {
-            modifier = 0; \
-          }
-          value = value + modifier;
         }
-        
-        ESC1.write(value);
-        ESC2.write(value);
-        Serial.println(value);
-        sendLora(String(value));
-      }
-    }
     } 
 }
 
@@ -205,12 +215,15 @@ void escOFF(){
     ESC1.write(0);
     ESC2.write(0);
 }
+
 void escHold(){
   holdEngine = true;
 }
+
 void escNoHold(){
   holdEngine = false;
 }
+
 void escKill(){
   if(killed == false){
     Serial.println("Called KILL");
@@ -224,9 +237,9 @@ void escKill(){
   }else{
     Serial.println("already dead");
   }
-  
   //implement engine kill
 }
+
 void escON(){
   //implement engine on
 }
