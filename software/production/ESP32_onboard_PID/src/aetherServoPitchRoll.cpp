@@ -41,6 +41,10 @@ Servo myservo1;
 int servoPin1 = 4;
 Servo myservo2;
 int servoPin2 = 2;
+Servo myservo3;
+int servoPin3 = 25;
+Servo myservo4;
+int servoPin4 = 15;
 
 // PID
 
@@ -94,6 +98,10 @@ void initServo(){
     myservo1.attach(servoPin1, 0, 2500);
     myservo2.setPeriodHertz(300);
     myservo2.attach(servoPin2, 0, 2500);
+    myservo3.setPeriodHertz(300);
+    myservo3.attach(servoPin3, 0, 2500);
+    myservo4.setPeriodHertz(300);
+    myservo4.attach(servoPin4, 0, 2500);
 }
 
 //MPU Init
@@ -182,6 +190,8 @@ void loopControl(){
           servoPitch = (90+OutputPitchP)-OutputPitchN;
           myservo1.write(servoRoll);
           myservo2.write(servoPitch);
+          myservo3.write(servoRoll);
+          myservo4.write(servoPitch);
         }
     }
     
