@@ -19,10 +19,10 @@ void inputGyro(float newValue){
     calcValue = newValue;
 }
 
-void handleGyroReading() {
- float a = calcValue;
- String adcValue = String(a);
- server.send(200, "text/plane", adcValue);
+void handleLog() {
+ String logvalue = readLora();
+ String logData = logData + logvalue;
+ server.send(200, "text/plane", logData);
 }
 
 void handleOn() { 
@@ -65,7 +65,7 @@ void initWeb(){
     WiFi.mode(WIFI_AP);
     WiFi.softAP(ssid, password);
     server.on("/", handleRoot);
-    server.on("/readGyro", handleGyroReading);
+    server.on("/readLog", handleLog);
     server.on("/On", handleOn);
     server.on("/Off", handleOff);
     server.on("/holdThrust", handleHoldThrust);

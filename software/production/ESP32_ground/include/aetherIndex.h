@@ -11,7 +11,7 @@ const char aetherIndex[] PROGMEM = R"=====(
     <h1 style="font-size: 5em; padding-left: 0.4em; text-align: center; color:white;">AETHER ONE</h1>
     <h2 style="font-size: 3em; padding-left: 15%; color:white;"><u>TELEMETRY DATA</u></h2>
     <h2 style="font-size: 2.5em; padding-top:2.5em;  padding-left: 10%; color:white;" class="sensore_value"><u>Sensor
-        Value: </u><span id="GyroValue"> 0</span></h1>
+        Value: </u><span id="Log"> 0</span></h1>
       <h2 style="font-size: 2.5em; padding-top:2.5em; padding-left: 10%; color:white;"><u>About Motor:</u></h2>
       <button id="current" onclick="changestatus()">Turn ON</button>
       <button id="holdThrust" onclick="holdThrust()">Hold Thrust</button>
@@ -33,11 +33,11 @@ const char aetherIndex[] PROGMEM = R"=====(
       var xhttp = new XMLHttpRequest();
       xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
-          document.getElementById("GyroValue").innerHTML =
+          document.getElementById("Log").innerHTML =
             this.responseText;
         }
       };
-      xhttp.open("GET", "readGyro", true);
+      xhttp.open("GET", "readLog", true);
       xhttp.send();
     }
 
