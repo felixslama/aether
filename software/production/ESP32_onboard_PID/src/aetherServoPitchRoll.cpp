@@ -4,6 +4,7 @@
 #include "MPU6050_6Axis_MotionApps20.h"
 #include "aetherLora.h"
 #include <PID_v1.h>
+#include "aetherLog.h"
 
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
     #include "Wire.h"
@@ -157,6 +158,7 @@ void initESC() {
     ESC1.write(0);
     ESC2.write(0);
     Serial.println("Wait 2 seconds befor motor start");
+    writeLog("Init esc done");
     delay(2000);
 }
 
@@ -194,6 +196,8 @@ void loopControl(){
           myservo2.write(servoPitch);
           myservo3.write(servoRoll2);
           myservo4.write(servoPitch2);
+          writeLog("Inputroll: " + InputRoll + "Inputpitch:" + InputPitch);
+          writeLog("Servo 1: " + servoRoll + "Servo 2: " + servoPitch + "Servo 3: " + servoRoll2 + "Servo4: " + servoPitch2);
         }
     }
     
@@ -216,7 +220,7 @@ void loopControl(){
             ESC1.write(value);
             ESC2.write(value);
             Serial.println(value);
-            sendLora(String(value));
+            writeLog(String(value));
           }
         }
     } 

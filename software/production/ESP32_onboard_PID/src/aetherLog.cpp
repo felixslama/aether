@@ -2,6 +2,7 @@
 #include <FS.h>
 #include <SD.h>
 #include <SPI.h>
+#include "aetherLora.h"
 
 #define SD_CS 13
 #define SPI_MOSI 15
@@ -10,6 +11,7 @@
 
 String loggedData = "START OF LOGFILE";
 String separator = ";";
+String loraLog = "";
 
 File logFile;
 void initLog(){
@@ -49,7 +51,9 @@ if(!SD.begin(13)){
 }
 void writeLog(String messageToLog){
     //logFile.println(messageToLog);
-    loggedData = loggedData + messageToLog + separator;
+    loggedData = loggedData + String(millis()) + " " + messageToLog + separator;
+    loraLog = String(millis()) + " " + messageToLog + separator;
+    sendLora(loraLog);
 }
 void closeLog(){
     logFile.close();
