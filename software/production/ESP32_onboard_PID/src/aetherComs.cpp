@@ -23,8 +23,8 @@ void handleReceivedLora(){
         escKill();
         writeLog(String(millis()) + "kill called");
         if(!killedComs){
-            endLora();
-            writeLogToSD();
+            //endLora();
+            //writeLogToSD();
         }
     }else if (dataReceived == "ENGINE ON"){
         escON();

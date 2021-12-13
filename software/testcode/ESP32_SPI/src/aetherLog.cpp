@@ -17,6 +17,13 @@ if(!SD.begin(SD_CS)){
         Serial.println("Card Mount Failed");
         return;
     }
+    logFile = SD.open("/log.txt",FILE_APPEND);
+    Serial.println("open log");
+    logFile.println("testtest");
+    Serial.println("write log");
+    logFile.close();
+    Serial.println("close log");
+
     uint8_t cardType = SD.cardType();
 
     if(cardType == CARD_NONE){

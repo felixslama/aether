@@ -9,10 +9,10 @@
 #define MISO 19
 #define MOSI 27
 #define SS 18
-#define RST 14
+#define RST 23
 #define DIO0 26
 
-String LoRaData; //string for lora data
+String LoRaData;
 long prevMillis = 0;
 long intvl = 2000;   
 
@@ -31,7 +31,7 @@ void sendLora(String messageToSend){
     if(currMillis - prevMillis > intvl) {
         prevMillis = currMillis;
         LoRa.beginPacket();
-        LoRa.println(messageToSend);
+        LoRa.print(messageToSend);
         LoRa.endPacket();
         Serial.println("sent external");
     }
@@ -46,9 +46,4 @@ String readLora(){
         }
     }
     return LoRaData;
-}
-
-void endLora(){
-    sendLora("ending Lora");
-    SPI.end();
 }
