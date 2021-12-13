@@ -5,11 +5,10 @@
 #include "aetherServoPitchRoll.h"
 #include "aetherComs.h"
 #include "aetherLog.h"
-//Logs WIP
 void setup() {
   Serial.begin(115200);
-  //initLog();
   initLora();
+  initLog();
   sendLora("initLora done");
   writeLog("initLora done");
   initServo();

@@ -2,21 +2,16 @@
 #include <FS.h>
 #include <SD.h>
 #include <SPI.h>
-#include "aetherLora.h"
 
 #define SD_CS 13
 #define SD_MOSI 15
 #define SD_MISO 2
 #define SD_SCK 14
 
-String loggedData = "START OF LOGFILE";
-String separator = ";";
-String loraLog = "";
-
 SPIClass SPI2(VSPI);
+
 File logFile;
 void initLog(){
-    Serial.println("begin of initlog");
 SPI2.begin(SD_SCK, SD_MISO, SD_MOSI, SD_CS);
 if(!SD.begin(SD_CS)){
         Serial.println("Card Mount Failed");
@@ -44,22 +39,11 @@ if(!SD.begin(SD_CS)){
     Serial.printf("SD Card Size: %lluMB\n", cardSize);
     Serial.printf("Total space: %lluMB\n", SD.totalBytes() / (1024 * 1024));
     Serial.printf("Used space: %lluMB\n", SD.usedBytes() / (1024 * 1024));
-
 }
 void writeLog(String messageToLog){
-    //logFile.println(messageToLog);
-    loggedData = loggedData + String(millis()) + " " + messageToLog + separator;
-    loraLog = String(millis()) + " " + messageToLog + separator;
-    sendLora(loraLog);
+    logFile.println(messageToLog);
 }
 void closeLog(){
     logFile.close();
     SPI2.end();
-}
-void writeLogToSD(){
-    Serial.println("begin of writetosd");
-    initLog();
-    logFile.println(loggedData);
-    closeLog();
-    Serial.println("end of writetosd");
 }

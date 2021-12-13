@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "../../production/ESP32_ground"
+		},
+		{
+			"name": "ESP32_SPI",
+			"path": "."
+		},
+		{
+			"name": "ESP32_onboard_PID",
+			"path": "../../production/ESP32_onboard_PID"
+		}
+	],
+	"settings": {}
+}
