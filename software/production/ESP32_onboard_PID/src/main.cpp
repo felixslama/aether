@@ -8,17 +8,17 @@
 void setup() {
   Serial.begin(115200);
   initLora();
-  initLog();
+  //initLog();
   writeLog("---------START OF LOG---------");
   writeLog("initLora done");
-  //initServo();
+  initServo();
   writeLog("iniServo done");
   initMPU();
   writeLog("initMPU done");
-  //initESC();
+  initESC();
   writeLog("initESC done");
   writeLog("setup done");
-  closeLog();
+  //closeLog();
   //initLog();
 }
 
