@@ -190,9 +190,9 @@ void loopControl(){
           pitchPID.Compute();
           NpitchPID.Compute();
           servoRoll = (90+OutputRollP)-OutputRollN;
-          servoPitch = (90+OutputPitchP)-OutputPitchN;
+          servoPitch = (90-OutputPitchP)+OutputPitchN;
           float servoRoll2 = (90-OutputRollP)+OutputRollN;
-          float servoPitch2 = (90-OutputPitchP)+OutputPitchN;
+          float servoPitch2 = (90+OutputPitchP)-OutputPitchN;
           myservo1.write(servoRoll);
           myservo2.write(servoPitch);
           myservo3.write(servoRoll2);
