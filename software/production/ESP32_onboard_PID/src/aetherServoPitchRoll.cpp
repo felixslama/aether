@@ -45,7 +45,7 @@ int servoPin2 = 2;
 Servo myservo3;
 int servoPin3 = 25;
 Servo myservo4;
-int servoPin4 = 15;
+int servoPin4 = 19;
 
 // PID
 
@@ -66,8 +66,8 @@ PID NpitchPID(&InputPitch, &OutputPitchN, &Setpoint, pKp, pKi, pKd, REVERSE);
 // MPU
 
 #define OUTPUT_READABLE_YAWPITCHROLL
-#define INTERRUPT_PIN 2
-#define LED_PIN 13
+#define INTERRUPT_PIN 3
+//#define LED_PIN 13
 bool blinkState = false;
 bool collectedSamples = false;
 float yawA, rollA, pitchA;
@@ -152,13 +152,14 @@ void initMPU() {
 
 void initESC() {
     ESC1.attach(12,1000,2000);
-    ESC2.attach(14,1000,2000);
+    ESC2.attach(23,1000,2000);
     Serial.println("Wating 2 seconds for ESC");
     delay(2000);
     ESC1.write(0);
     ESC2.write(0);
     Serial.println("Wait 2 seconds befor motor start");
     writeLog("Init esc done");
+    Serial.println("hrr");
     delay(2000);
 }
 

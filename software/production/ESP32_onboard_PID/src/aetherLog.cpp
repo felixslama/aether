@@ -1,8 +1,11 @@
 #include <Arduino.h>
-#include <FS.h>
-#include <SD.h>
+//#include <FS.h>
+#include "SdFat.h"
 #include <SPI.h>
 #include "aetherLora.h"
+#if ENABLE_SOFTWARE_SPI_CLASS
+
+//SdFat SD;
 
 String loggedData = "START OF LOGFILE";
 String separator = ";";
@@ -13,16 +16,22 @@ String loraLog = "";
 #define SD_MISO 2
 #define SD_SCK 14
 
-SPIClass SPI2(VSPI);
+long lastWriteMillis = 0;
+long currentMillis = 0;
+const long interval = 1000;
+
+//SPIClass SPI2(VSPI);
+SdFatSoftSpi<SD_MISO, SD_MOSI, SD_SCK> SD;
 
 File logFile;
 void initLog(){
-SPI2.begin(SD_SCK, SD_MISO, SD_MOSI, SD_CS);
+//SPI2.begin(SD_SCK, SD_MISO, SD_MOSI, SD_CS);
 if(!SD.begin(SD_CS)){
+        SD.initErrorHalt();
         Serial.println("Card Mount Failed");
         return;
     }
-    logFile = SD.open("/log.txt",FILE_APPEND);
+    logFile = SD.open("/log.txt",FILE_WRITE);
     /*
     uint8_t cardType = SD.cardType();
 
@@ -49,14 +58,31 @@ if(!SD.begin(SD_CS)){
     */
 }
 void writeLog(String messageToLog){
-    Serial.println(String(millis()) + "-" + messageToLog + separator);
-    logFile.println(String(millis()) + "-" + messageToLog + separator);
-    loggedData = loggedData + String(millis()) + "-" + messageToLog + separator;
-    loraLog = String(millis()) + "-" + messageToLog + separator;
-    sendLora(loraLog);
+    if(logFile){
+        Serial.println(String(millis()) + "-" + messageToLog + separator);
+        logFile.println(String(millis()) + "-" + messageToLog + separator);
+        loggedData = loggedData + String(millis()) + "-" + messageToLog + separator;
+        loraLog = String(millis()) + "-" + messageToLog + separator;
+        //sendLora(loraLog);
+    }else{
+        Serial.println("catched");
+    }
+        
+    
+        
+    
+    
 }
 void closeLog(){
     Serial.println("closelog start");
     logFile.close();
     Serial.println("closelog end");
 }
+void loopLog(){
+    currentMillis = millis();
+    if(lastWriteMillis - currentMillis >= interval){
+        closeLog();
+        initLog();
+    }
+}
+#endif
