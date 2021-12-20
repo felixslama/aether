@@ -3,59 +3,57 @@
 #include "SdFat.h"
 #include <SPI.h>
 #include "aetherLora.h"
-#if ENABLE_SOFTWARE_SPI_CLASS
 
 //SdFat SD;
+#if SPI_DRIVER_SELECT == 2
+#define SD_FAT_TYPE 0
 
 String loggedData = "START OF LOGFILE";
 String separator = ";";
 String loraLog = "";
 
-#define SD_CS 13
-#define SD_MOSI 15
-#define SD_MISO 2
-#define SD_SCK 14
+const uint8_t SD_CS = 13;
+const uint8_t SD_MOSI = 15;
+const uint8_t SD_MISO = 2;
+const uint8_t SD_SCK = 14;
 
 long lastWriteMillis = 0;
 long currentMillis = 0;
 const long interval = 1000;
 
 //SPIClass SPI2(VSPI);
-SdFatSoftSpi<SD_MISO, SD_MOSI, SD_SCK> SD;
+SoftSpiDriver<SD_MISO, SD_MOSI, SD_SCK> softSpi;
 
-File logFile;
+#if ENABLE_DEDICATED_SPI
+#define SD_CONFIG SdSpiConfig(SD_CS, DEDICATED_SPI, SD_SCK_MHZ(0), &softSpi)
+#else  // ENABLE_DEDICATED_SPI
+#define SD_CONFIG SdSpiConfig(SD_CS_PIN, SHARED_SPI, SD_SCK_MHZ(0), &softSpi)
+#endif  // ENABLE_DEDICATED_SPI
+
+SdFat32 sd;
+File32 logFile;
 void initLog(){
-//SPI2.begin(SD_SCK, SD_MISO, SD_MOSI, SD_CS);
-if(!SD.begin(SD_CS)){
-        SD.initErrorHalt();
-        Serial.println("Card Mount Failed");
-        return;
-    }
-    logFile = SD.open("/log.txt",FILE_WRITE);
-    /*
-    uint8_t cardType = SD.cardType();
-
-    if(cardType == CARD_NONE){
-        Serial.println("No SD card attached");
-        return;
-    }
-
-    Serial.print("SD Card Type: ");
-    if(cardType == CARD_MMC){
-        Serial.println("MMC");
-    } else if(cardType == CARD_SD){
-        Serial.println("SDSC");
-    } else if(cardType == CARD_SDHC){
-        Serial.println("SDHC");
-    } else {
-        Serial.println("UNKNOWN");
-    }
-
-    uint64_t cardSize = SD.cardSize() / (1024 * 1024);
-    Serial.printf("SD Card Size: %lluMB\n", cardSize);
-    Serial.printf("Total space: %lluMB\n", SD.totalBytes() / (1024 * 1024));
-    Serial.printf("Used space: %lluMB\n", SD.usedBytes() / (1024 * 1024));
-    */
+    Serial.println("begin init");
+if(!sd.begin(SD_CONFIG)){
+    sd.initErrorHalt();
+    sd.initErrorPrint();
+}
+/*
+if(!logFile.open("log.txt", O_RDWR | O_CREAT)){
+    Serial.println("begin logfile open");
+    sd.errorHalt(F("open failed"));
+}*/
+Serial.println(logFile.open("log.txt", O_WRITE | O_CREAT | O_AT_END ));
+logFile.println("init log print");
+Serial.println("end init");
+/*
+logFile.rewind();
+while(logFile.available()){
+    Serial.write(logFile.read());
+}
+Serial.println(logFile.close());
+Serial.println("done");
+*/
 }
 void writeLog(String messageToLog){
     if(logFile){
@@ -67,22 +65,22 @@ void writeLog(String messageToLog){
     }else{
         Serial.println("catched");
     }
-        
-    
-        
-    
-    
 }
 void closeLog(){
     Serial.println("closelog start");
-    logFile.close();
+    Serial.println(logFile.close());
     Serial.println("closelog end");
 }
 void loopLog(){
+    writeLog("looplog");
     currentMillis = millis();
-    if(lastWriteMillis - currentMillis >= interval){
+//    Serial.println("outer looplog" + String(currentMillis));
+    if(lastWriteMillis + interval <= currentMillis){
+        Serial.println("begin looplog " + String(currentMillis));
         closeLog();
         initLog();
+        lastWriteMillis = currentMillis;
+//        Serial.println("end looplog");
     }
 }
 #endif

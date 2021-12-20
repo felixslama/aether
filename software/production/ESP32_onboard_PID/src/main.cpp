@@ -9,9 +9,11 @@ void setup() {
   Serial.begin(115200);
   initLora();
   initLog();
+  
   writeLog("---------START OF LOG---------");
   writeLog("initLora done");
-  initServo();
+  
+  //initServo();
   writeLog("iniServo done");
   initMPU();
   writeLog("initMPU done");
@@ -33,14 +35,18 @@ void setup() {
                                   writeLog("initMPU done");
 
   initESC();
+  
   writeLog("initESC done");
   writeLog("setup done");
   closeLog();
-  //initLog();
+  initLog();
+  
 }
 
 void loop() {
   handleReceivedLora();
   loopControl();
-  //loopLog();
+  loopLog();
+  writeLog("loop");
+//  Serial.println("loop");
 }
