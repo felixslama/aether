@@ -1,5 +1,5 @@
 .pio
 .vscode
-.bin
-.hex
-.elf
+*.bin
+*.hex
+*.elf
