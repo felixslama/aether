@@ -9,33 +9,13 @@ void setup() {
   Serial.begin(115200);
   initLora();
   initLog();
-  
   writeLog("---------START OF LOG---------");
   writeLog("initLora done");
-  
-  //initServo();
+  initServo();
   writeLog("iniServo done");
   initMPU();
   writeLog("initMPU done");
-    writeLog("initMPU done");
-      writeLog("initMPU done");
-        writeLog("initMPU done");
-          writeLog("initMPU done");
-            writeLog("initMPU done");
-              writeLog("initMPU done");
-                writeLog("initMPU done");
-                  writeLog("initMPU done");
-                    writeLog("initMPU done");
-                      writeLog("initMPU done");
-                        writeLog("initMPU done");
-                          writeLog("initMPU done");
-                            writeLog("initMPU done");
-                              writeLog("initMPU done");
-                                writeLog("initMPU done");
-                                  writeLog("initMPU done");
-
   initESC();
-  
   writeLog("initESC done");
   writeLog("setup done");
   closeLog();
@@ -47,6 +27,4 @@ void loop() {
   handleReceivedLora();
   loopControl();
   loopLog();
-  writeLog("loop");
-//  Serial.println("loop");
 }

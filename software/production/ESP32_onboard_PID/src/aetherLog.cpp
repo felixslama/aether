@@ -38,22 +38,9 @@ if(!sd.begin(SD_CONFIG)){
     sd.initErrorHalt();
     sd.initErrorPrint();
 }
-/*
-if(!logFile.open("log.txt", O_RDWR | O_CREAT)){
-    Serial.println("begin logfile open");
-    sd.errorHalt(F("open failed"));
-}*/
 Serial.println(logFile.open("log.txt", O_WRITE | O_CREAT | O_AT_END ));
 logFile.println("init log print");
 Serial.println("end init");
-/*
-logFile.rewind();
-while(logFile.available()){
-    Serial.write(logFile.read());
-}
-Serial.println(logFile.close());
-Serial.println("done");
-*/
 }
 void writeLog(String messageToLog){
     if(logFile){
@@ -67,20 +54,16 @@ void writeLog(String messageToLog){
     }
 }
 void closeLog(){
-    Serial.println("closelog start");
-    Serial.println(logFile.close());
-    Serial.println("closelog end");
+    logFile.close();
 }
 void loopLog(){
     writeLog("looplog");
     currentMillis = millis();
-//    Serial.println("outer looplog" + String(currentMillis));
     if(lastWriteMillis + interval <= currentMillis){
-        Serial.println("begin looplog " + String(currentMillis));
+        writeLog("begin looplog " + String(currentMillis));
         closeLog();
         initLog();
         lastWriteMillis = currentMillis;
-//        Serial.println("end looplog");
     }
 }
 #endif
