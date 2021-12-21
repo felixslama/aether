@@ -12,7 +12,7 @@ String dataReceived;
 void handleReceivedLora(){
     dataReceived = readLora();
     if(dataReceived != ""){
-        Serial.println(dataReceived);
+        writeLog(dataReceived + "handlereceivedlora");
     }
     if (dataReceived == "ENGINE OFF"){
         escOFF();
@@ -23,8 +23,7 @@ void handleReceivedLora(){
         escKill();
         writeLog(String(millis()) + "kill called");
         if(!killedComs){
-            //endLora();
-            //writeLogToSD();
+            loopLog();
         }
     }else if (dataReceived == "ENGINE ON"){
         escON();

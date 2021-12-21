@@ -153,13 +153,12 @@ void initMPU() {
 void initESC() {
     ESC1.attach(12,1000,2000);
     ESC2.attach(23,1000,2000);
-    Serial.println("Wating 2 seconds for ESC");
+    writeLog("Wating 2 seconds for ESC");
     delay(2000);
     ESC1.write(0);
     ESC2.write(0);
-    Serial.println("Wait 2 seconds befor motor start");
+    writeLog("Wait 2 seconds befor motor start");
     writeLog("Init esc done");
-    Serial.println("hrr");
     delay(2000);
 }
 
