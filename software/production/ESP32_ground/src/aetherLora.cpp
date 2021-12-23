@@ -14,7 +14,7 @@
 
 String LoRaData;
 long prevMillis = 0;
-long intvl = 2000;   
+long intvl = 10;   
 
 void initLora(){
     SPI.begin(SCK, MISO, MOSI, SS);
@@ -33,7 +33,7 @@ void sendLora(String messageToSend){
         LoRa.beginPacket();
         LoRa.print(messageToSend);
         LoRa.endPacket();
-        Serial.println("sent external");
+        Serial.println(messageToSend);
     }
 }
 

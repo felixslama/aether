@@ -41,7 +41,7 @@ Servo ESC2;
 Servo myservo1;
 int servoPin1 = 4;
 Servo myservo2;
-int servoPin2 = 0;
+int servoPin2 = 26;
 Servo myservo3;
 int servoPin3 = 25;
 Servo myservo4;

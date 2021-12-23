@@ -11,6 +11,7 @@ String dataReceived;
 
 void handleReceivedLora(){
     dataReceived = readLora();
+    Serial.println(dataReceived);
     if(dataReceived != ""){
         writeLog(dataReceived + "handlereceivedlora");
     }

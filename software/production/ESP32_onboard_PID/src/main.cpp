@@ -7,7 +7,7 @@
 #include "aetherLog.h"
 void setup() {
   Serial.begin(115200);
-  initLora();
+  //initLora();
   initLog();
   writeLog("---------START OF LOG---------");
   writeLog("initLora done");
