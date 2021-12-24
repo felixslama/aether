@@ -168,6 +168,7 @@ bool holdEngine = false;
 
 void loopControl(){
     if (!dmpReady) {
+      Serial.println("noready");
       return;
     }
     if (mpu.dmpGetCurrentFIFOPacket(fifoBuffer)) {
@@ -182,7 +183,7 @@ void loopControl(){
           collectedSamples = true;
           pitchA = (ypr[1] * 180/M_PI);
           rollA = (ypr[2] * 180/M_PI);
-          writeLog("Roll: " + String(rollA) + "Pitch:" + String(pitchA));
+          writeLog("Roll: " + String(rollA) + " Pitch:" + String(pitchA));
           InputRoll = rollA;
           InputPitch = pitchA;
           rollPID.Compute();
@@ -197,7 +198,7 @@ void loopControl(){
           myservo2.write(servoPitch);
           myservo3.write(servoRoll2);
           myservo4.write(servoPitch2);
-          writeLog("Servo 1: " + String(servoRoll) + "Servo 2: " + String(servoPitch) + "Servo 3: " + String(servoRoll2) + "Servo4: " + String(servoPitch2));
+          writeLog("Servo 1: " + String(servoRoll) + " Servo 2: " + String(servoPitch) + " Servo 3: " + String(servoRoll2) + " Servo4: " + String(servoPitch2));
         }
     }
     
@@ -220,7 +221,7 @@ void loopControl(){
             ESC1.write(value);
             ESC2.write(value);
             Serial.println(value);
-            writeLog(String(value));
+            writeLog("ESC Value: " + String(value));
           }
         }
     } 

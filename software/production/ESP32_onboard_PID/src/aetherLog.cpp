@@ -57,7 +57,6 @@ void closeLog(){
     logFile.close();
 }
 void loopLog(){
-    writeLog("looplog");
     currentMillis = millis();
     if(lastWriteMillis + interval <= currentMillis){
         writeLog("begin looplog " + String(currentMillis));
