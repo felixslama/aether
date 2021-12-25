@@ -3,80 +3,58 @@
 #include <WebServer.h>
 #include "aetherIndex.h"
 #include "aetherLora.h"
+#include <ESPAsyncWebServer.h>
 
 float calcValue;
 
 const char* ssid     = "Rocket Telemetry";
 const char* password = "rocketgobrr";
-WebServer server(80);
 
-void handleRoot() {
- String s = aetherIndex;
- server.send(200, "text/html", s);
-}
+AsyncWebServer server(80);
 
 void inputGyro(float newValue){
     calcValue = newValue;
 }
 
-void handleLog() {
- String logvalue = readLora();
- String logData = logData + logvalue;
- server.send(200, "text/plane", logData);
-}
-
-void handleOn() { 
- Serial.println("ON");
- sendLora("ENGINE ON");
- handleRoot();
-}
-void handleOff() { 
- Serial.println("OFF");
- sendLora("ENGINE OFF");
- handleRoot();
-}
-void handleHoldThrust(){
-    Serial.println("hold thrust");
- sendLora("ENGINE HOLD");
- handleRoot();
-}
-void handleNoHoldThrust(){
-    Serial.println("no hold thrust");
- sendLora("NO ENGINE HOLD");
- handleRoot();
-}
-void handleKill(){
-    Serial.println("killed");
- sendLora("ENGINE KILL");
- handleRoot();
-}
-void increase(){
-    Serial.println("increased");
-sendLora("SPEED UP");
-handleRoot();
-}
-void decrease(){
-    Serial.println("decrease");
-sendLora("SPEED DOWN");
-handleRoot();
-}
-
 void initWeb(){
     WiFi.mode(WIFI_AP);
     WiFi.softAP(ssid, password);
-    server.on("/", handleRoot);
-    server.on("/readLog", handleLog);
-    server.on("/On", handleOn);
-    server.on("/Off", handleOff);
-    server.on("/holdThrust", handleHoldThrust);
-    server.on("/noHoldThrust",handleNoHoldThrust);
-    server.on("/kill",handleKill);
-    server.on("/increase",increase);
-    server.on("/decrease",decrease);
+    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+        request->send_P(200, "text/html", aetherIndex);
+    });
+    server.on("/readLog", HTTP_GET, [] (AsyncWebServerRequest *request) {
+        String logvalue = readLora();
+        String logData = logData + logvalue;
+        request->send(200, "text/plane", logData);
+    });
+    server.on("/On", HTTP_GET, [] (AsyncWebServerRequest *request) {
+        Serial.println("ON");
+        sendLora("ENGINE ON");
+    });
+    server.on("/Off", HTTP_GET, [] (AsyncWebServerRequest *request) {
+        Serial.println("OFF");
+        sendLora("ENGINE OFF");
+    });
+    server.on("/holdThrust", HTTP_GET, [] (AsyncWebServerRequest *request) {
+        Serial.println("hold thrust");
+        sendLora("ENGINE HOLD");
+    });
+    server.on("/noHoldThrust", HTTP_GET, [] (AsyncWebServerRequest *request) {
+        Serial.println("no hold thrust");
+        sendLora("NO ENGINE HOLD");
+    });
+    server.on("/kill", HTTP_GET, [] (AsyncWebServerRequest *request) {
+        Serial.println("killed");
+        sendLora("ENGINE KILL");
+    });
+    server.on("/increase", HTTP_GET, [] (AsyncWebServerRequest *request) {
+        Serial.println("increased");
+        sendLora("SPEED UP");
+    });
+    server.on("/decrease", HTTP_GET, [] (AsyncWebServerRequest *request) {
+        Serial.println("decrease");
+        sendLora("SPEED DOWN");
+    });
     server.begin();
     Serial.println("HTTP server started");
-}
-
-void loopWeb(){
-    server.handleClient();
 }
