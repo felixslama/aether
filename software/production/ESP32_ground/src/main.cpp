@@ -8,9 +8,8 @@
 #include "aetherButton.h"
 
 void setup() {
-
   Serial.begin(115200);
-//  initLog();
+  initLog();
   initLora();
   Serial.println("initLora done");
   //writeLog("testtest");
@@ -23,11 +22,13 @@ void setup() {
   //sendLora("initWeb done");
   //sendLora("Setup Done"); 
   initButton();
-  //closeLog();
+  initLog();
+  closeLog();
 }
 
 void loop() {
   loopButton();
   loopDisplay();
   loopWeb();
+  loopLog();
 }

@@ -43,15 +43,11 @@ logFile.println("init log print");
 Serial.println("end init");
 }
 void writeLog(String messageToLog){
-    if(logFile){
-        Serial.println(String(millis()) + "-" + messageToLog + separator);
-        logFile.println(String(millis()) + "-" + messageToLog + separator);
-        loggedData = loggedData + String(millis()) + "-" + messageToLog + separator;
-        loraLog = String(millis()) + "-" + messageToLog + separator;
-        //sendLora(loraLog);
-    }else{
-        Serial.println("catched");
-    }
+    Serial.println(String(millis()) + "-" + messageToLog + separator);
+    logFile.println(String(millis()) + "-" + messageToLog + separator);
+    loggedData = loggedData + String(millis()) + "-" + messageToLog + separator;
+    loraLog = String(millis()) + "-" + messageToLog + separator;
+    sendLora(loraLog);
 }
 void closeLog(){
     logFile.close();

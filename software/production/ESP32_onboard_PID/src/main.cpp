@@ -7,8 +7,8 @@
 #include "aetherLog.h"
 void setup() {
   Serial.begin(115200);
-  //initLora();
-  initLog();
+  initLora();
+  //initLog();
   writeLog("---------START OF LOG---------");
   writeLog("initLora done");
   initServo();
@@ -18,13 +18,13 @@ void setup() {
   initESC();
   writeLog("initESC done");
   writeLog("setup done");
-  closeLog();
-  initLog();
+  //closeLog();
+  //initLog();
   
 }
 
 void loop() {
   handleReceivedLora();
   loopControl();
-  loopLog();
+  //loopLog();
 }

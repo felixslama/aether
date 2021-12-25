@@ -41,11 +41,11 @@ Servo ESC2;
 Servo myservo1;
 int servoPin1 = 4;
 Servo myservo2;
-int servoPin2 = 26;
+int servoPin2 = 2;
 Servo myservo3;
 int servoPin3 = 25;
 Servo myservo4;
-int servoPin4 = 19;
+int servoPin4 = 15;
 
 // PID
 

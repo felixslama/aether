@@ -1,47 +1,70 @@
 #include <Arduino.h>
-#include <FS.h>
-#include <SD.h>
+//#include <FS.h>
+#include "SdFat.h"
 #include <SPI.h>
+#include "aetherLora.h"
 
-#define SD_CS 13
-#define SPI_MOSI 15
-#define SPI_MISO 2
-#define SPI_SCK 14
+//SdFat SD;
+#if SPI_DRIVER_SELECT == 2
+#define SD_FAT_TYPE 0
 
-File logFile;
+String loggedData = "START OF LOGFILE";
+String separator = ";";
+String loraLog = "";
+String currentLora = "";
+String receivedLora = "";
+
+const uint8_t SD_CS = 13;
+const uint8_t SD_MOSI = 15;
+const uint8_t SD_MISO = 2;
+const uint8_t SD_SCK = 14;
+
+long lastWriteMillis = 0;
+long currentMillis = 0;
+const long interval = 500;
+
+//SPIClass SPI2(VSPI);
+SoftSpiDriver<SD_MISO, SD_MOSI, SD_SCK> softSpi;
+
+#if ENABLE_DEDICATED_SPI
+#define SD_CONFIG SdSpiConfig(SD_CS, DEDICATED_SPI, SD_SCK_MHZ(0), &softSpi)
+#else  // ENABLE_DEDICATED_SPI
+#define SD_CONFIG SdSpiConfig(SD_CS_PIN, SHARED_SPI, SD_SCK_MHZ(0), &softSpi)
+#endif  // ENABLE_DEDICATED_SPI
+
+SdFat32 sd;
+File32 logFile;
 void initLog(){
-SPI.begin(14, 2, 15);
-if(!SD.begin(13)){
-        Serial.println("Card Mount Failed");
-        return;
+    Serial.println("begin init");
+    if(!sd.begin(SD_CONFIG)){
+        sd.initErrorHalt();
+        sd.initErrorPrint();
     }
-    uint8_t cardType = SD.cardType();
-
-    if(cardType == CARD_NONE){
-        Serial.println("No SD card attached");
-        return;
-    }
-
-    Serial.print("SD Card Type: ");
-    if(cardType == CARD_MMC){
-        Serial.println("MMC");
-    } else if(cardType == CARD_SD){
-        Serial.println("SDSC");
-    } else if(cardType == CARD_SDHC){
-        Serial.println("SDHC");
-    } else {
-        Serial.println("UNKNOWN");
-    }
-
-    uint64_t cardSize = SD.cardSize() / (1024 * 1024);
-    Serial.printf("SD Card Size: %lluMB\n", cardSize);
-    Serial.printf("Total space: %lluMB\n", SD.totalBytes() / (1024 * 1024));
-    Serial.printf("Used space: %lluMB\n", SD.usedBytes() / (1024 * 1024));
+    Serial.println(logFile.open("log.txt", O_WRITE | O_CREAT | O_AT_END ));
+    logFile.println("init log print");
+    Serial.println("end init");
 }
 void writeLog(String messageToLog){
-    logFile.println(messageToLog);
+    Serial.println(String(millis()) + "-" + messageToLog + separator);
+    logFile.println(String(millis()) + "-" + messageToLog + separator);
+    loggedData = loggedData + String(millis()) + "-" + messageToLog + separator;
+    loraLog = String(millis()) + "-" + messageToLog + separator;
+    sendLora(loraLog);
 }
 void closeLog(){
     logFile.close();
-    SPI.end();
 }
+void loopLog(){
+    currentMillis = millis();
+    currentLora = readLora();
+    if(receivedLora != currentLora){
+        writeLog(currentLora);
+    }
+    if(lastWriteMillis + interval <= currentMillis){
+        writeLog("begin looplog " + String(currentMillis));
+        closeLog();
+        initLog();
+        lastWriteMillis = currentMillis;
+    }
+}
+#endif
