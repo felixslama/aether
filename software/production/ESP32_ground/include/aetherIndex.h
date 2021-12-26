@@ -183,7 +183,7 @@ const char updateIndex[] PROGMEM = R"=====(
     <body>
         <section id="mainContainer">
             <h1>AETHER-OTA</h1>
-            <p>Only *.bin files will work!</p>
+            <p>Only *.bin files will work!!</p>
             <form method='POST' action='/doUpdate' enctype='multipart/form-data' target='_self' onsubmit='notify_update()'>
                 <input type='file' name='update' accept=".bin" required><br>
                 <input id="submitButton" type='submit' value='Start Update!'>
