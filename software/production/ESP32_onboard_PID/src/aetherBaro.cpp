@@ -1,11 +1,19 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include <Adafruit_BMP280.h>
+#include "aetherLog.h"
 
 Adafruit_BMP280 bmp;
 
+double atmosphericpressure = 1013.25;
+float currentHeight;
+float maxHeight;
+int interval = 200;
+long currentMillis;
+long previousMillis = 0;
+
 void initBaro(){
-    if(!bmp.begin()){
+    if(!bmp.begin(0x76)){
         Serial.println(F("Could not find a valid BMP280 sensor, check wiring or "
                       "try a different address!"));
         Serial.print("SensorID was: 0x"); Serial.println(bmp.sensorID(),16);
@@ -21,6 +29,7 @@ void initBaro(){
                   Adafruit_BMP280::FILTER_X16,      /* Filtering. */
                   Adafruit_BMP280::STANDBY_MS_500); /* Standby time. */
 }
+
 void loopBaro(){
     Serial.print(F("Temperature = "));
     Serial.print(bmp.readTemperature());
@@ -35,5 +44,19 @@ void loopBaro(){
     Serial.println(" m");
 
     Serial.println();
-    delay(2000);
+}
+float getHeight(){
+    return bmp.readAltitude(atmosphericpressure);
+}
+void loopApogee(){
+    currentMillis = millis();
+    if(currentMillis - previousMillis > interval){
+        currentHeight = getHeight();
+        writeLog("Current Height: " + String(currentHeight));
+        writeLog("Current Apogee: " + String(maxHeight));
+        if(currentHeight > maxHeight){
+            maxHeight = currentHeight;
+            writeLog("New Apogee: " + String(maxHeight));
+        }
+    }
 }

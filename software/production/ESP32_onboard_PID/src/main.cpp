@@ -14,11 +14,11 @@ void setup() {
   initBaro();
   writeLog("---------START OF LOG---------");
   writeLog("initLora done");
-  initServo();
+  //initServo();
   writeLog("iniServo done");
-  initMPU();
+  //initMPU();
   writeLog("initMPU done");
-  initESC();
+  //initESC();
   writeLog("initESC done");
   writeLog("setup done");
   //closeLog();
@@ -29,6 +29,6 @@ void setup() {
 void loop() {
   //handleReceivedLora();
   //loopControl();
-  loopBaro();
   //loopLog();
+  loopApogee();
 }
