@@ -8,9 +8,9 @@ Adafruit_BMP280 bmp;
 double atmosphericpressure = 1013.25;
 float currentHeight;
 float maxHeight;
-int interval = 200;
-long currentMillis;
-long previousMillis = 0;
+int interval2 = 200;
+long currentMillis2;
+long previousMillis2 = 0;
 
 void initBaro(){
     if(!bmp.begin(0x76)){
@@ -49,8 +49,8 @@ float getHeight(){
     return bmp.readAltitude(atmosphericpressure);
 }
 void loopApogee(){
-    currentMillis = millis();
-    if(currentMillis - previousMillis > interval){
+    currentMillis2 = millis();
+    if(currentMillis2 - previousMillis2 > interval2){
         currentHeight = getHeight();
         writeLog("Current Height: " + String(currentHeight));
         writeLog("Current Apogee: " + String(maxHeight));

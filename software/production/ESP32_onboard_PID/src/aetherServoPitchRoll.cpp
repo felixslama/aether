@@ -249,7 +249,7 @@ void escKill(){
     ESC2.write(0);
     Serial.println(ESC1.read());
     Serial.println(ESC2.read());
-    sendLora("Killed");
+    //sendLora("Killed");
     killed = true;
   }else{
     Serial.println("already dead");

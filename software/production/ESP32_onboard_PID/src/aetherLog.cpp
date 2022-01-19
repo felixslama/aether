@@ -17,8 +17,8 @@ const uint8_t SD_MOSI = 15;
 const uint8_t SD_MISO = 2;
 const uint8_t SD_SCK = 14;
 
-long lastWriteMillis = 0;
-long currentMillis = 0;
+long lastWriteMillis1 = 0;
+long currentMillis1 = 0;
 const long interval = 1000;
 
 //SPIClass SPI2(VSPI);
@@ -47,18 +47,18 @@ void writeLog(String messageToLog){
     logFile.println(String(millis()) + "-" + messageToLog + separator);
     loggedData = loggedData + String(millis()) + "-" + messageToLog + separator;
     loraLog = String(millis()) + "-" + messageToLog + separator;
-    sendLora(loraLog);
+    //sendLora(loraLog);
 }
 void closeLog(){
     logFile.close();
 }
 void loopLog(){
-    currentMillis = millis();
-    if(lastWriteMillis + interval <= currentMillis){
-        writeLog("begin looplog " + String(currentMillis));
+    currentMillis1 = millis();
+    if(lastWriteMillis1 + interval <= currentMillis1){
+        writeLog("begin looplog " + String(currentMillis1));
         closeLog();
         initLog();
-        lastWriteMillis = currentMillis;
+        lastWriteMillis1 = currentMillis1;
     }
 }
 #endif

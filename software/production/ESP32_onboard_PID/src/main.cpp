@@ -9,16 +9,16 @@
 
 void setup() {
   Serial.begin(115200);
-  initLora();
+  //initLora();
   //initLog();
-  initBaro();
+  //initBaro();
   writeLog("---------START OF LOG---------");
   writeLog("initLora done");
   //initServo();
   writeLog("iniServo done");
-  //initMPU();
+  initMPU();
   writeLog("initMPU done");
-  //initESC();
+  initESC();
   writeLog("initESC done");
   writeLog("setup done");
   //closeLog();
@@ -28,7 +28,7 @@ void setup() {
 
 void loop() {
   //handleReceivedLora();
-  //loopControl();
+  loopControl();
   //loopLog();
-  loopApogee();
+  //loopApogee();
 }
