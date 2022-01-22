@@ -42,6 +42,12 @@ Servo servoPitch2;
 Servo servoRoll1;
 Servo servoRoll2;
 
+// Axis Limiters
+const int limitRollMin = 70;
+const int limitPitchMin = 70;
+const int limitRollMax = 110;
+const int limitPitchMax = 110;
+
 // PID
 // tuning params Roll
 float rKp=0.9, rKi=0, rKd=0;
@@ -165,15 +171,17 @@ void loopControl(){
       NrollPID.Compute();
       pitchPID.Compute();
       NpitchPID.Compute();
-      float pidRoll1 = (90+OutputRollP)-OutputRollN;
-      float pidPitch1 = (90-OutputPitchP)+OutputPitchN;
-      float pidRoll2 = (90-OutputRollP)+OutputRollN;
-      float pidPitch2 = (90+OutputPitchP)-OutputPitchN;
-      servoPitch1.write(pidPitch1);
-      servoPitch2.write(pidPitch2);
-      servoRoll1.write(pidRoll1);
-      servoRoll2.write(pidRoll2);
-      writeLog("Pitch 1: " + String(pidPitch1) + " Pitch 2: " + String(pidPitch2) + " Roll 1: " + String(pidRoll1) + " Roll 2: " + String(pidRoll2));
+      float pidRoll = (90+OutputRollP)-OutputRollN;
+      float pidPitch = (90-OutputPitchP)+OutputPitchN;
+      if (pidRoll <= limitRollMax && pidRoll >= limitRollMin) {
+        servoRoll1.write(pidRoll);
+        servoRoll2.write(pidRoll);
+      }
+      if (pidPitch <= limitPitchMax && pidPitch >= limitPitchMin) {
+        servoPitch1.write(pidPitch);
+        servoPitch2.write(pidPitch);
+      }
+      writeLog("Pitch: " + String(pidPitch) + " Roll: " + String(pidRoll));
     }
   }
   unsigned long currentMillis = millis();
@@ -235,4 +243,4 @@ void escKill(){
 
 void escON(){
   // implement engine on
-}
+}12
