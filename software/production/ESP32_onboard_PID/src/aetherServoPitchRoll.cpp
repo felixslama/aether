@@ -42,12 +42,6 @@ Servo servoRoll2;
 Servo servoPitch1;
 Servo servoPitch2;
 
-// Inverters per Axis
-const int inverterR1 = 1;
-const int inverterR2 = -1;
-const int inverterP1 = 1;
-const int inverterP2 = -1;
-
 // Axis Limiters
 const int limitRollMin = 70;
 const int limitRollMax = 110;
@@ -177,17 +171,25 @@ void loopControl(){
       NrollPID.Compute();
       pitchPID.Compute();
       NpitchPID.Compute();
-      float pidRoll = (90+OutputRollP)-OutputRollN;
-      float pidPitch = (90+OutputPitchP)-OutputPitchN;
-      if (pidRoll <= limitRollMax && pidRoll >= limitRollMin) {
-        servoRoll1.write(pidRoll*inverterR1);
-        servoRoll2.write(pidRoll*inverterR2);
+      /* 
+        To Invert Servo Dir switch plus and minus.
+        For example:
+        NORMAL: (90+OutputRollP)-OutputRollN;
+        REVERSE: (90-OutputRollP)+OutputRollN;
+      */
+      float pidRoll1 = (90+OutputRollP)-OutputRollN;
+      float pidRoll2 = (90+OutputRollP)-OutputRollN;
+      float pidPitch1 = (90+OutputPitchP)-OutputPitchN;
+      float pidPitch2 = (90+OutputPitchP)-OutputPitchN;
+      if (pidRoll1 <= limitRollMax && pidRoll1 >= limitRollMin) {
+        servoRoll1.write(pidRoll1);
+        servoRoll2.write(pidRoll2);
       }
-      if (pidPitch <= limitPitchMax && pidPitch >= limitPitchMin) {
-        servoPitch1.write(pidPitch*inverterP1);
-        servoPitch2.write(pidPitch*inverterP2);
+      if (pidPitch1 <= limitPitchMax && pidPitch1 >= limitPitchMin) {
+        servoPitch1.write(pidPitch1);
+        servoPitch2.write(pidPitch2);
       }
-      writeLog("Pitch: " + String(pidPitch) + " Roll: " + String(pidRoll));
+      writeLog("Pitch: " + String(pidPitch1) + " Roll: " + String(pidRoll1));
     }
   }
   unsigned long currentMillis = millis();
