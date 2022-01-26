@@ -37,15 +37,21 @@ Servo ESC1;
 Servo ESC2;
 
 // Servo
-Servo servoPitch1;
-Servo servoPitch2;
 Servo servoRoll1;
 Servo servoRoll2;
+Servo servoPitch1;
+Servo servoPitch2;
+
+// Inverters per Axis
+const int inverterR1 = 1;
+const int inverterR2 = -1;
+const int inverterP1 = 1;
+const int inverterP2 = -1;
 
 // Axis Limiters
 const int limitRollMin = 70;
-const int limitPitchMin = 70;
 const int limitRollMax = 110;
+const int limitPitchMin = 70;
 const int limitPitchMax = 110;
 
 // PID
@@ -172,14 +178,14 @@ void loopControl(){
       pitchPID.Compute();
       NpitchPID.Compute();
       float pidRoll = (90+OutputRollP)-OutputRollN;
-      float pidPitch = (90-OutputPitchP)+OutputPitchN;
+      float pidPitch = (90+OutputPitchP)-OutputPitchN;
       if (pidRoll <= limitRollMax && pidRoll >= limitRollMin) {
-        servoRoll1.write(pidRoll);
-        servoRoll2.write(pidRoll);
+        servoRoll1.write(pidRoll*inverterR1);
+        servoRoll2.write(pidRoll*inverterR2);
       }
       if (pidPitch <= limitPitchMax && pidPitch >= limitPitchMin) {
-        servoPitch1.write(pidPitch);
-        servoPitch2.write(pidPitch);
+        servoPitch1.write(pidPitch*inverterP1);
+        servoPitch2.write(pidPitch*inverterP2);
       }
       writeLog("Pitch: " + String(pidPitch) + " Roll: " + String(pidRoll));
     }
@@ -243,4 +249,4 @@ void escKill(){
 
 void escON(){
   // implement engine on
-}12
+}
