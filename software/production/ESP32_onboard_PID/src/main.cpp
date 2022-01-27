@@ -14,7 +14,7 @@ void setup() {
   //initBaro();
   writeLog("---------START OF LOG---------");
   writeLog("initLora done");
-  //initServo();
+  initServo();
   writeLog("iniServo done");
   initMPU();
   writeLog("initMPU done");

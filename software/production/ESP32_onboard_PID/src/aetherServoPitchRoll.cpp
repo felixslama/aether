@@ -25,10 +25,10 @@ double InputPitch, OutputPitchP, OutputPitchN;
 double InputRoll, OutputRollP, OutputRollN;
 
 // Pins
-const int servoPinRoll1 = 4;
-const int servoPinRoll2 = 2;
-const int servoPinPitch1 = 25;
-const int servoPinPitch2 = 15;
+const int servoPinRoll1 = 25;
+const int servoPinRoll2 = 15;
+const int servoPinPitch1 = 4;
+const int servoPinPitch2 = 2;
 const int escPin1 = 12;
 const int escPin2 = 23;
 
@@ -178,8 +178,8 @@ void loopControl(){
         REVERSE: (90-OutputRollP)+OutputRollN;
       */
       float pidRoll1 = (90+OutputRollP)-OutputRollN;
-      float pidRoll2 = (90+OutputRollP)-OutputRollN;
-      float pidPitch1 = (90+OutputPitchP)-OutputPitchN;
+      float pidRoll2 = (90-OutputRollP)+OutputRollN;
+      float pidPitch1 = (90-OutputPitchP)+OutputPitchN;
       float pidPitch2 = (90+OutputPitchP)-OutputPitchN;
       if (pidRoll1 <= limitRollMax && pidRoll1 >= limitRollMin) {
         servoRoll1.write(pidRoll1);
