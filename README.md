@@ -1,4 +1,7 @@
-### Aether One is finished. Aether Heavy it is.
 <div align="center">
-  <img align="center" src="documentation/logo/logoNewJapaneseText.png" />
+    <hr>
+    <h1>AETHER Engineering</h1>
+    <p>Official Repository</p>
+    <hr>
+    <img align="center" src="media/logo/logoNewJapaneseText.png" />
 </div>
