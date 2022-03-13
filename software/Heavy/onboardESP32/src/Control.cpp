@@ -3,15 +3,14 @@
 #include <Wire.h>
 #include "MPU6050_6Axis_MotionApps20.h"
 #include "Comms.h"
-#include <PID_v1.h>
+#include "PID.h"
 #include "Logs.h"
 
 // general Vars
 int i;
-float yawA, rollA, pitchA;
 bool collectedSamples = false;
-double InputPitch, OutputPitchP, OutputPitchN;
-double InputRoll, OutputRollP, OutputRollN;
+double InputPitch, OutputPitch;
+double InputRoll, OutputRoll;
 bool controlReady = false;
 
 // Pins
@@ -33,17 +32,11 @@ const int limitPitchMin = 70;
 const int limitPitchMax = 110;
 
 // PID
-// tuning params Roll
-float rKp=0.9, rKi=0, rKd=0;
-// tuning params Pitch
-float pKp=0.9, pKi=0, pKd=0;
-// Setpoint (value to maintain)
-double Setpoint = 0;
-// PIDloops
-PID rollPID(&InputRoll, &OutputRollP, &Setpoint, rKp, rKi, rKd, DIRECT);
-PID NrollPID(&InputRoll, &OutputRollN, &Setpoint, rKp, rKi, rKd, REVERSE);
-PID pitchPID(&InputPitch, &OutputPitchP, &Setpoint, pKp, pKi, pKd, DIRECT);
-PID NpitchPID(&InputPitch, &OutputPitchN, &Setpoint, pKp, pKi, pKd, REVERSE);
+double rP=1, rI=0, rD=0;
+double pP=1, pI=0, pD=0;
+double Setpoint = 90;
+PID rollPID(InputRoll, OutputPitch, rP, rI, rD, Setpoint);
+PID pitchPID(InputPitch, OutputPitch, pP, pI, pD, Setpoint);
 
 // i2cDev MPU Init
 MPU6050 mpu;
@@ -104,14 +97,6 @@ void initMPU() {
     dmpReady = true;
     packetSize = mpu.dmpGetFIFOPacketSize();
   }
-  rollPID.SetMode(AUTOMATIC);
-  NrollPID.SetMode(AUTOMATIC);
-  rollPID.SetOutputLimits(0,30);
-  NrollPID.SetOutputLimits(0,30);
-  pitchPID.SetMode(AUTOMATIC);
-  NpitchPID.SetMode(AUTOMATIC);
-  NpitchPID.SetOutputLimits(0,30);
-  pitchPID.SetOutputLimits(0,30);
 }
 
 bool checkReadyStatus() {
@@ -141,31 +126,17 @@ void loopControl(){
       i++;
     } else {
       collectedSamples = true;
-      pitchA = (ypr[1] * 180/M_PI);
-      rollA = (ypr[2] * 180/M_PI);
-      InputRoll = rollA;
-      InputPitch = pitchA;
-      rollPID.Compute();
-      NrollPID.Compute();
-      pitchPID.Compute();
-      NpitchPID.Compute();
-      /* 
-        To Invert Servo Dir switch plus and minus.
-        For example:
-        NORMAL: (90+OutputRollP)-OutputRollN;
-        REVERSE: (90-OutputRollP)+OutputRollN;
-      */
-      float pidRoll1 = (90+OutputRollP)-OutputRollN;
-      float pidRoll2 = (90-OutputRollP)+OutputRollN;
-      float pidPitch1 = (90-OutputPitchP)+OutputPitchN;
-      float pidPitch2 = (90+OutputPitchP)-OutputPitchN;
-      if (pidRoll1 <= limitRollMax && pidRoll1 >= limitRollMin) {
-        servoRoll1.write(pidRoll1);
-        servoRoll2.write(pidRoll2);
+      InputPitch = (ypr[1] * 180/M_PI);
+      InputRoll = (ypr[2] * 180/M_PI);
+      double outRoll = rollPID.computePID();
+      double outPitch = pitchPID.computePID();
+      if (outRoll <= limitRollMax && outRoll >= limitRollMin) {
+        servoRoll1.write(outRoll);
+        servoRoll2.write(outRoll);
       }
-      if (pidPitch1 <= limitPitchMax && pidPitch1 >= limitPitchMin) {
-        servoPitch1.write(pidPitch1);
-        servoPitch2.write(pidPitch2);
+      if (outPitch <= limitPitchMax && outPitch >= limitPitchMin) {
+        servoPitch1.write(outPitch);
+        servoPitch2.write(outPitch);
       }
     }
   }
