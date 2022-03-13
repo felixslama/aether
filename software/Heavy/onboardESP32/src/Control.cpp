@@ -5,9 +5,10 @@
 #include "Comms.h"
 #include "PID.h"
 #include "Logs.h"
+#include "Control.h"
 
 // general Vars
-int i;
+int sampleCount;
 bool collectedSamples = false;
 double InputPitch, OutputPitch;
 double InputRoll, OutputRoll;
@@ -32,9 +33,10 @@ const int limitPitchMin = 70;
 const int limitPitchMax = 110;
 
 // PID
-double rP=1, rI=0, rD=0;
-double pP=1, pI=0, pD=0;
+double rP=1.1, rI=0, rD=0;
+double pP=1.1, pI=0, pD=0;
 double Setpoint = 90;
+// two PID loops, one for Roll and one for Pitch
 PID rollPID(InputRoll, OutputPitch, rP, rI, rD, Setpoint);
 PID pitchPID(InputPitch, OutputPitch, pP, pI, pD, Setpoint);
 
@@ -60,10 +62,6 @@ float ypr[3];
 uint8_t teapotPacket[14] = { '$', 0x02, 0,0, 0,0, 0,0, 0,0, 0x00, 0x00, '\r', '\n' };
 volatile bool mpuInterrupt = false;
 
-void dmpDataReady() {
-  mpuInterrupt = true;
-}
-
 // Servo Init
 void initServo() {
   servoPitch1.setPeriodHertz(300);
@@ -76,6 +74,10 @@ void initServo() {
   servoRoll2.attach(servoPinRoll2, 0, 2500);
 }
 
+// MPU init
+void dmpDataReady() {
+  mpuInterrupt = true;
+}
 void initMPU() {
   Wire.begin();
   Wire.setClock(400000);
@@ -99,6 +101,7 @@ void initMPU() {
   }
 }
 
+// status check
 bool checkReadyStatus() {
   if (controlReady == true) {
     // put more checks here if necessary
@@ -109,9 +112,9 @@ bool checkReadyStatus() {
   }
 }
 
+//main control loop
 void loopControl(){
   if (!dmpReady) {
-    Serial.print(".");
     controlReady = false;
     return;
   }
@@ -120,16 +123,19 @@ void loopControl(){
     mpu.dmpGetQuaternion(&q, fifoBuffer);
     mpu.dmpGetGravity(&gravity, &q);
     mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
-    if (i <= 300) {
-      Serial.print("Collecting Samples...");
+    if (sampleCount <= 300) {
+      Serial.print("._.-");
       correct = ypr[0];
-      i++;
+      sampleCount++;
     } else {
       collectedSamples = true;
+      // get degree input from axis to PID controller
       InputPitch = (ypr[1] * 180/M_PI);
       InputRoll = (ypr[2] * 180/M_PI);
+      // compute PID values based on degree vals
       double outRoll = rollPID.computePID();
       double outPitch = pitchPID.computePID();
+      // write values to servos within axis limiters
       if (outRoll <= limitRollMax && outRoll >= limitRollMin) {
         servoRoll1.write(outRoll);
         servoRoll2.write(outRoll);
