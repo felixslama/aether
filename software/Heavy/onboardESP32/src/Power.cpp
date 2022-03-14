@@ -8,7 +8,7 @@ Servo ESC2;
 // vars
 bool holdEngine = false;
 bool killed = false;
-bool runLoop = true;
+bool runLoop = false;
 bool once = true;
 long previousMillis = 0;
 long interval = 50;   
@@ -46,16 +46,8 @@ void loopPower() {
             }
             ESC1.write(value);
             ESC2.write(value);
-            Serial.println(value);
         }
     } 
-}
-
-// turn off ESC
-void escOFF(){
-    runLoop = false;
-    ESC1.write(0);
-    ESC2.write(0);
 }
 
 // hold ESC value
@@ -68,7 +60,7 @@ void toggleESCHold(){
 }
 
 // terminate ESCs
-void escKill(){
+void killPower() {
     if(killed == false){
         Serial.println("recv kill");
         runLoop = false;

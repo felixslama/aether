@@ -3,16 +3,9 @@
 #include <Wire.h>
 #include "MPU6050_6Axis_MotionApps20.h"
 #include "Comms.h"
-#include <PID_v1.h>
+#include "PID.h"
 #include "Logs.h"
-
-// general Vars
-int i;
-float yawA, rollA, pitchA;
-bool collectedSamples = false;
-double InputPitch, OutputPitchP, OutputPitchN;
-double InputRoll, OutputRollP, OutputRollN;
-bool controlReady = false;
+#include "Control.h"
 
 // Pins
 const int servoPinRoll1 = 25;
@@ -33,23 +26,18 @@ const int limitPitchMin = 70;
 const int limitPitchMax = 110;
 
 // PID
-// tuning params Roll
-float rKp=0.9, rKi=0, rKd=0;
-// tuning params Pitch
-float pKp=0.9, pKi=0, pKd=0;
-// Setpoint (value to maintain)
-double Setpoint = 0;
-// PIDloops
-PID rollPID(&InputRoll, &OutputRollP, &Setpoint, rKp, rKi, rKd, DIRECT);
-PID NrollPID(&InputRoll, &OutputRollN, &Setpoint, rKp, rKi, rKd, REVERSE);
-PID pitchPID(&InputPitch, &OutputPitchP, &Setpoint, pKp, pKi, pKd, DIRECT);
-PID NpitchPID(&InputPitch, &OutputPitchN, &Setpoint, pKp, pKi, pKd, REVERSE);
+double Setpoint = 90;
+double InputPitch, OutputPitch;
+double InputRoll, OutputRoll;
+PID rollPID(&InputRoll, &OutputRoll, &Setpoint);
+PID pitchPID(&InputPitch, &OutputPitch, &Setpoint);
 
-// i2cDev MPU Init
+// MPU
 MPU6050 mpu;
 #define OUTPUT_READABLE_YAWPITCHROLL
 #define INTERRUPT_PIN 3
-bool blinkState = false;
+int sampleCount;
+bool controlReady = false;
 float correct;
 bool dmpReady = false;
 uint8_t mpuIntStatus;
@@ -67,8 +55,14 @@ float ypr[3];
 uint8_t teapotPacket[14] = { '$', 0x02, 0,0, 0,0, 0,0, 0,0, 0x00, 0x00, '\r', '\n' };
 volatile bool mpuInterrupt = false;
 
-void dmpDataReady() {
-  mpuInterrupt = true;
+// PID init
+void initPID() {
+  // ( kP, kI, kD, changeDir )
+  /*
+    !DIRECTION CHANGES CAN AND SHOULD ONLY HAPPEN HERE!
+  */
+  rollPID.set(0.9, 0, 0, false);
+  pitchPID.set(0.9, 0, 0, false);
 }
 
 // Servo Init
@@ -83,6 +77,10 @@ void initServo() {
   servoRoll2.attach(servoPinRoll2, 0, 2500);
 }
 
+// MPU init
+void dmpDataReady() {
+  mpuInterrupt = true;
+}
 void initMPU() {
   Wire.begin();
   Wire.setClock(400000);
@@ -104,16 +102,9 @@ void initMPU() {
     dmpReady = true;
     packetSize = mpu.dmpGetFIFOPacketSize();
   }
-  rollPID.SetMode(AUTOMATIC);
-  NrollPID.SetMode(AUTOMATIC);
-  rollPID.SetOutputLimits(0,30);
-  NrollPID.SetOutputLimits(0,30);
-  pitchPID.SetMode(AUTOMATIC);
-  NpitchPID.SetMode(AUTOMATIC);
-  NpitchPID.SetOutputLimits(0,30);
-  pitchPID.SetOutputLimits(0,30);
 }
 
+// status check
 bool checkReadyStatus() {
   if (controlReady == true) {
     // put more checks here if necessary
@@ -124,48 +115,40 @@ bool checkReadyStatus() {
   }
 }
 
+//main control loop
 void loopControl(){
   if (!dmpReady) {
-    Serial.print(".");
     controlReady = false;
     return;
   }
   if (mpu.dmpGetCurrentFIFOPacket(fifoBuffer)) {
-    controlReady = true;
     mpu.dmpGetQuaternion(&q, fifoBuffer);
     mpu.dmpGetGravity(&gravity, &q);
     mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
-    if (i <= 300) {
-      Serial.print("Collecting Samples...");
+    if (sampleCount <= 300) {
+      Serial.print("_");
       correct = ypr[0];
-      i++;
+      sampleCount++;
     } else {
-      collectedSamples = true;
-      pitchA = (ypr[1] * 180/M_PI);
-      rollA = (ypr[2] * 180/M_PI);
-      InputRoll = rollA;
-      InputPitch = pitchA;
-      rollPID.Compute();
-      NrollPID.Compute();
-      pitchPID.Compute();
-      NpitchPID.Compute();
-      /* 
-        To Invert Servo Dir switch plus and minus.
-        For example:
-        NORMAL: (90+OutputRollP)-OutputRollN;
-        REVERSE: (90-OutputRollP)+OutputRollN;
-      */
-      float pidRoll1 = (90+OutputRollP)-OutputRollN;
-      float pidRoll2 = (90-OutputRollP)+OutputRollN;
-      float pidPitch1 = (90-OutputPitchP)+OutputPitchN;
-      float pidPitch2 = (90+OutputPitchP)-OutputPitchN;
-      if (pidRoll1 <= limitRollMax && pidRoll1 >= limitRollMin) {
-        servoRoll1.write(pidRoll1);
-        servoRoll2.write(pidRoll2);
+      // assume control loop is ready to operate
+      controlReady = true;
+      // raw  degree data
+      double rawPitch = (ypr[1] * 180/M_PI);
+      double rawRoll = (ypr[2] * 180/M_PI);
+      // convert into servo readable value
+      InputPitch = map(rawPitch, -180.00, 180.00, 0.00, 180.00);
+      InputRoll = map(rawRoll, -180.00, 180.00, 0.00, 180.00);
+      // compute PID values based on servo vals
+      rollPID.computePID();
+      pitchPID.computePID();
+      // apply to servos
+      if (OutputRoll <= limitRollMax && OutputRoll >= limitRollMin) {
+        servoRoll1.write(OutputRoll);
+        servoRoll2.write(OutputRoll);
       }
-      if (pidPitch1 <= limitPitchMax && pidPitch1 >= limitPitchMin) {
-        servoPitch1.write(pidPitch1);
-        servoPitch2.write(pidPitch2);
+      if (OutputPitch <= limitPitchMax && OutputPitch >= limitPitchMin) {
+        servoPitch1.write(OutputPitch);
+        servoPitch2.write(OutputPitch);
       }
     }
   }

@@ -11,6 +11,7 @@ void setup() {
   Serial.begin(115200);
   initServo();
   initMPU();
+  initPID();
   initESC();
 }
 
@@ -20,7 +21,6 @@ void loop() {
   if (checkReadyStatus() == true) {
     loopPower();
   } else {
-    // should upper not be true, we kill power train immediately
-    escKill();
+    return;
   }
 }
