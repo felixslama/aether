@@ -1,7 +1,7 @@
 class PID {
     public:
-        PID(double, double, double, double, double, double);
-        float computePID();
+        PID(double, double, double);
+        bool computePID();
         void set(double, double, double);
     private:
         double kP, kI, kD;

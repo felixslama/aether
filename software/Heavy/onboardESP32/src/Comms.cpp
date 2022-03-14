@@ -29,20 +29,16 @@ void handleReceivedLora(){
         writeLog(dataReceived + "handlereceivedlora");
     }
     if (dataReceived == "ENGINE OFF"){
-        escOFF();
+        return;
     }else if (dataReceived == "ENGINE HOLD"){
-        escHold();
+        toggleESCHold();
     }else if (dataReceived == "ENGINE KILL"){
         Serial.println("kill triggered");
-        escKill();
-        writeLog(String(millis()) + "kill called");
-        if(!killedComs){
-            loopLog();
-        }
+        killPower();
     }else if (dataReceived == "ENGINE ON"){
-        escON();
+        return;
     }else if (dataReceived == "NO ENGINE HOLD"){
-        escNoHold();
+        toggleESCHold();
     }
 }
 

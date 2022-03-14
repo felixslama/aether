@@ -7,13 +7,6 @@
 #include "Logs.h"
 #include "Control.h"
 
-// general Vars
-int sampleCount;
-bool collectedSamples = false;
-double InputPitch, OutputPitch;
-double InputRoll, OutputRoll;
-bool controlReady = false;
-
 // Pins
 const int servoPinRoll1 = 25;
 const int servoPinRoll2 = 15;
@@ -33,18 +26,18 @@ const int limitPitchMin = 70;
 const int limitPitchMax = 110;
 
 // PID
-double rP=1.1, rI=0, rD=0;
-double pP=1.1, pI=0, pD=0;
+double InputPitch, OutputPitch;
+double InputRoll, OutputRoll;
 double Setpoint = 90;
-// two PID loops, one for Roll and one for Pitch
-PID rollPID(InputRoll, OutputPitch, rP, rI, rD, Setpoint);
-PID pitchPID(InputPitch, OutputPitch, pP, pI, pD, Setpoint);
+PID rollPID(InputRoll, OutputRoll, Setpoint);
+PID pitchPID(InputPitch, OutputPitch, Setpoint);
 
-// i2cDev MPU Init
+// MPU
 MPU6050 mpu;
 #define OUTPUT_READABLE_YAWPITCHROLL
 #define INTERRUPT_PIN 3
-bool blinkState = false;
+int sampleCount;
+bool controlReady = false;
 float correct;
 bool dmpReady = false;
 uint8_t mpuIntStatus;
@@ -101,6 +94,13 @@ void initMPU() {
   }
 }
 
+// PID init
+void initPID() {
+  // ( kP, kI, kD )
+  rollPID.set(1,0,0);
+  pitchPID.set(1,0,0);
+}
+
 // status check
 bool checkReadyStatus() {
   if (controlReady == true) {
@@ -119,7 +119,6 @@ void loopControl(){
     return;
   }
   if (mpu.dmpGetCurrentFIFOPacket(fifoBuffer)) {
-    controlReady = true;
     mpu.dmpGetQuaternion(&q, fifoBuffer);
     mpu.dmpGetGravity(&gravity, &q);
     mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
@@ -128,21 +127,21 @@ void loopControl(){
       correct = ypr[0];
       sampleCount++;
     } else {
-      collectedSamples = true;
+      // assume control loop is ready to operate
+      controlReady = true;
       // get degree input from axis to PID controller
       InputPitch = (ypr[1] * 180/M_PI);
       InputRoll = (ypr[2] * 180/M_PI);
       // compute PID values based on degree vals
-      double outRoll = rollPID.computePID();
-      double outPitch = pitchPID.computePID();
-      // write values to servos within axis limiters
-      if (outRoll <= limitRollMax && outRoll >= limitRollMin) {
-        servoRoll1.write(outRoll);
-        servoRoll2.write(outRoll);
+      rollPID.computePID();
+      pitchPID.computePID();
+      if (OutputRoll <= limitRollMax && OutputRoll >= limitRollMin) {
+        servoRoll1.write(OutputRoll);
+        servoRoll2.write(OutputRoll);
       }
-      if (outPitch <= limitPitchMax && outPitch >= limitPitchMin) {
-        servoPitch1.write(outPitch);
-        servoPitch2.write(outPitch);
+      if (OutputPitch <= limitPitchMax && OutputPitch >= limitPitchMin) {
+        servoPitch1.write(OutputPitch);
+        servoPitch2.write(OutputPitch);
       }
     }
   }

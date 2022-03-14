@@ -51,13 +51,6 @@ void loopPower() {
     } 
 }
 
-// turn off ESC
-void escOFF(){
-    runLoop = false;
-    ESC1.write(0);
-    ESC2.write(0);
-}
-
 // hold ESC value
 void toggleESCHold(){
   if ( holdEngine == false ) {
@@ -68,7 +61,7 @@ void toggleESCHold(){
 }
 
 // terminate ESCs
-void escKill(){
+void killPower() {
     if(killed == false){
         Serial.println("recv kill");
         runLoop = false;

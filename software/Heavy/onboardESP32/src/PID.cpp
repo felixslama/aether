@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include "PID.h"
 
-PID::PID(double Input, double Output, double kP, double kI, double kD, double Setpoint) {
+PID::PID(double Input, double Output, double Setpoint) {
     pidOutput = Output;
     pidInput = Input;
     pidSetpoint = Setpoint;
@@ -20,7 +20,7 @@ void PID::set(double SkP, double SkI, double SkD)
    kD = SkD / sampleTimeInSec;
 }
 
-float PID::computePID() {
+bool PID::computePID() {
     unsigned long now = millis();
     unsigned long timeChange = (now - lastTime);
     if (timeChange >= sampleTime) {
@@ -34,6 +34,7 @@ float PID::computePID() {
         pidOutput = output;
         lastInput = input;
         lastTime = now;
-        return output;
-    } else return;
+        return true;
+    } 
+    else return false;
 }
