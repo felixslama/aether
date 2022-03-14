@@ -21,7 +21,6 @@ void loop() {
   if (checkReadyStatus() == true) {
     loopPower();
   } else {
-    // should upper not be true, we kill power train immediately
-    killPower();
+    return;
   }
 }

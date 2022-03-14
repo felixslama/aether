@@ -8,7 +8,7 @@ Servo ESC2;
 // vars
 bool holdEngine = false;
 bool killed = false;
-bool runLoop = true;
+bool runLoop = false;
 bool once = true;
 long previousMillis = 0;
 long interval = 50;   
@@ -46,7 +46,6 @@ void loopPower() {
             }
             ESC1.write(value);
             ESC2.write(value);
-            Serial.println(value);
         }
     } 
 }

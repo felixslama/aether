@@ -26,11 +26,11 @@ const int limitPitchMin = 70;
 const int limitPitchMax = 110;
 
 // PID
+double Setpoint = 90;
 double InputPitch, OutputPitch;
 double InputRoll, OutputRoll;
-double Setpoint = 90;
-PID rollPID(InputRoll, OutputRoll, Setpoint);
-PID pitchPID(InputPitch, OutputPitch, Setpoint);
+PID rollPID(&InputRoll, &OutputRoll, &Setpoint);
+PID pitchPID(&InputPitch, &OutputPitch, &Setpoint);
 
 // MPU
 MPU6050 mpu;
@@ -54,6 +54,16 @@ float euler[3];
 float ypr[3];
 uint8_t teapotPacket[14] = { '$', 0x02, 0,0, 0,0, 0,0, 0,0, 0x00, 0x00, '\r', '\n' };
 volatile bool mpuInterrupt = false;
+
+// PID init
+void initPID() {
+  // ( kP, kI, kD, changeDir )
+  /*
+    !DIRECTION CHANGES CAN AND SHOULD ONLY HAPPEN HERE!
+  */
+  rollPID.set(0.9, 0, 0, false);
+  pitchPID.set(0.9, 0, 0, false);
+}
 
 // Servo Init
 void initServo() {
@@ -94,13 +104,6 @@ void initMPU() {
   }
 }
 
-// PID init
-void initPID() {
-  // ( kP, kI, kD )
-  rollPID.set(1,0,0);
-  pitchPID.set(1,0,0);
-}
-
 // status check
 bool checkReadyStatus() {
   if (controlReady == true) {
@@ -123,18 +126,22 @@ void loopControl(){
     mpu.dmpGetGravity(&gravity, &q);
     mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
     if (sampleCount <= 300) {
-      Serial.print("._.-");
+      Serial.print("_");
       correct = ypr[0];
       sampleCount++;
     } else {
       // assume control loop is ready to operate
       controlReady = true;
-      // get degree input from axis to PID controller
-      InputPitch = (ypr[1] * 180/M_PI);
-      InputRoll = (ypr[2] * 180/M_PI);
-      // compute PID values based on degree vals
+      // raw  degree data
+      double rawPitch = (ypr[1] * 180/M_PI);
+      double rawRoll = (ypr[2] * 180/M_PI);
+      // convert into servo readable value
+      InputPitch = map(rawPitch, -180.00, 180.00, 0.00, 180.00);
+      InputRoll = map(rawRoll, -180.00, 180.00, 0.00, 180.00);
+      // compute PID values based on servo vals
       rollPID.computePID();
       pitchPID.computePID();
+      // apply to servos
       if (OutputRoll <= limitRollMax && OutputRoll >= limitRollMin) {
         servoRoll1.write(OutputRoll);
         servoRoll2.write(OutputRoll);
